@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — TenderAI{% endblock %}
+
+{% block content %}
+<div style="max-width:900px;margin:0 auto;padding:32px 24px;">
+
+  <h1 style="font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:4px;">Admin Dashboard</h1>
+  <p style="color:var(--muted);font-size:0.9rem;margin-bottom:28px;">Overview of TenderAI usage and leads.</p>
+
+  <!-- Stats -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;">
+    <div style="background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);">
+      <div style="font-size:0.82rem;color:var(--muted);margin-bottom:4px;">Total Users</div>
+      <div style="font-family:'Sora',sans-serif;font-size:1.8rem;font-weight:800;">{{ stats.total_users }}</div>
+    </div>
+    <div style="background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);">
+      <div style="font-size:0.82rem;color:var(--muted);margin-bottom:4px;">Total Analyses</div>
+      <div style="font-family:'Sora',sans-serif;font-size:1.8rem;font-weight:800;">{{ stats.total_analyses }}</div>
+    </div>
+    <div style="background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);">
+      <div style="font-size:0.82rem;color:var(--muted);margin-bottom:4px;">Total Leads</div>
+      <div style="font-family:'Sora',sans-serif;font-size:1.8rem;font-weight:800;">{{ stats.total_leads }}</div>
+    </div>
+    <div style="background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);">
+      <div style="font-size:0.82rem;color:var(--muted);margin-bottom:4px;">New Leads</div>
+      <div style="font-family:'Sora',sans-serif;font-size:1.8rem;font-weight:800;color:var(--orange);">{{ stats.new_leads }}</div>
+    </div>
+  </div>
+
+  <!-- Quick Links -->
+  <div style="display:flex;gap:12px;margin-bottom:28px;">
+    <a href="/admin/leads" style="padding:10px 20px;border-radius:9px;font-size:0.85rem;font-weight:700;
+       background:var(--blue);color:white;text-decoration:none;">Manage Leads →</a>
+    <a href="/dashboard" style="padding:10px 20px;border-radius:9px;font-size:0.85rem;font-weight:500;
+       background:white;color:var(--blue);border:1px solid rgba(30,111,232,0.3);text-decoration:none;">Back to Dashboard</a>
+  </div>
+
+  <!-- Recent Leads -->
+  <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:14px;">Recent Leads</h2>
+
+  {% if not leads %}
+  <div style="text-align:center;padding:32px;background:var(--white);border-radius:14px;border:1px solid var(--border);color:var(--muted);">
+    No leads yet.
+  </div>
+  {% else %}
+  <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;background:var(--white);border-radius:14px;overflow:hidden;border:1px solid var(--border);">
+      <thead>
+        <tr style="background:var(--surface);text-align:left;font-size:0.82rem;font-weight:600;color:var(--muted);">
+          <th style="padding:12px 14px;">Company</th>
+          <th style="padding:12px 14px;">Tender</th>
+          <th style="padding:12px 14px;">Fit</th>
+          <th style="padding:12px 14px;">Status</th>
+          <th style="padding:12px 14px;">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lead in leads[:10] %}
+        <tr style="border-top:1px solid var(--border);font-size:0.85rem;">
+          <td style="padding:10px 14px;">{{ lead.company_name or '—' }}</td>
+          <td style="padding:10px 14px;">{{ (lead.tender_title or '—')[:40] }}</td>
+          <td style="padding:10px 14px;">{{ lead.fit_score or '—' }}</td>
+          <td style="padding:10px 14px;">
+            <span style="padding:3px 8px;border-radius:5px;font-size:0.75rem;font-weight:600;
+              {% if lead.status == 'new' %}background:#dbeafe;color:#1e40af;
+              {% elif lead.status == 'expert_review_requested' %}background:#fef9c3;color:#854d0e;
+              {% elif lead.status == 'call_booked' %}background:#dcfce7;color:#166534;
+              {% elif lead.status == 'closed' %}background:#f3f4f6;color:#4b5563;
+              {% else %}background:#f3f4f6;color:#4b5563;{% endif %}">
+              {{ lead.status }}
+            </span>
+          </td>
+          <td style="padding:10px 14px;">{{ lead.created_at[:10] if lead.created_at else '' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

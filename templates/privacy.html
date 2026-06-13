@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy — TenderAI{% endblock %}
+{% block meta_description %}TenderAI Privacy Policy — how we collect, use, and protect your data.{% endblock %}
+
+{% block content %}
+<div style="max-width:720px;margin:0 auto;padding:32px 24px;">
+
+  <h1 style="font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:4px;">Privacy Policy</h1>
+  <p style="color:var(--muted);font-size:0.85rem;margin-bottom:28px;">Last updated: June 2026</p>
+
+  <div style="background:var(--white);border-radius:14px;padding:28px 24px;border:1px solid var(--border);line-height:1.7;font-size:0.9rem;">
+
+    <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">1. Information We Collect</h2>
+    <p style="margin-bottom:8px;">We collect the following types of information:</p>
+    <ul style="margin-bottom:18px;padding-left:20px;">
+      <li><strong>Account Information:</strong> Email address, hashed password</li>
+      <li><strong>Company Profile:</strong> Company name, registration number, PAN, turnover, experience, domain, certifications, and other profile fields you provide</li>
+      <li><strong>Tender Documents:</strong> PDF files you upload or text you paste for analysis</li>
+      <li><strong>Usage Data:</strong> Analysis history, timestamps, feature usage</li>
+      <li><strong>Contact Data:</strong> Messages you send via the contact form</li>
+    </ul>
+
+    <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">2. How We Use Your Information</h2>
+    <ul style="margin-bottom:18px;padding-left:20px;">
+      <li>To provide and improve the AI tender analysis service</li>
+      <li>To generate personalised eligibility assessments and recommendations</li>
+      <li>To communicate with you about your account and analyses</li>
+      <li>To improve our product and user experience</li>
+      <li>To comply with legal obligations</li>
+    </ul>
+
+    <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">3. Data Storage and Security</h2>
+    <ul style="margin-bottom:18px;padding-left:20px;">
+      <li>Data is stored on Supabase (AWS-hosted PostgreSQL) with encryption at rest and in transit</li>
+      <li>Passwords are hashed using bcrypt — we never store plain text passwords</li>
+      <li>We use HTTPS for all data transmission</li>
+      <li>Session cookies are set with HttpOnly, Secure (in production), and SameSite=Lax flags</li>
+      <li>We implement CSRF protection on all forms</li>
+    </ul>
+
+    <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">4. Data Sharing</h2>
+    <p style="margin-bottom:18px;">We do <strong>not</strong> sell, trade, or rent your personal information. We share data only with:</p>
+    <ul style="margin-bottom:18px;padding-left:20px;">
+      <li><strong>AI Providers:</strong> Groq and/or Google Gemini — to process tender analysis. These providers process data under their own privacy policies and do not use your data for training.</li>
+      <li><strong>Infrastructure Providers:</strong> Supabase (database), Render (hosting) — as necessary to operate the service</li>
+      <li><strong>Legal Requirements:</strong> If required by Indian law or court order</li>
+    </ul>
+
+    <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">5. Data Retention</h2>
+    <p style="margin-bottom:18px;">We retain your account data for as long as your account is active. Tender documents and analysis reports are stored until you delete them or close your account. You may request deletion of your data at any time.</p>
+
+    <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">6. Your Rights</h2>
+    <p style="margin-bottom:8px;">Under applicable Indian data protection laws, you have the right to:</p>
+    <ul style="margin-bottom:18px;padding-left:20px;">
+      <li>Access your personal data</li>
+      <li>Correct inaccurate data</li>
+      <li>Request deletion of your data</li>
+      <li>Withdraw consent for data processing</li>
+    </ul>
+
+    <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">7. Cookies</h2>
+    <p style="margin-bottom:18px;">We use essential session cookies for authentication. We may use Google Analytics and Microsoft Clarity for anonymous usage analytics. No advertising cookies are used. A cookie consent mechanism will be added before production launch.</p>
+
+    <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">8. Children's Privacy</h2>
+    <p style="margin-bottom:18px;">TenderAI is not intended for use by persons under 18 years of age. We do not knowingly collect data from minors.</p>
+
+    <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">9. Changes to This Policy</h2>
+    <p style="margin-bottom:18px;">We may update this Privacy Policy from time to time. We will notify registered users of significant changes via email.</p>
+
+    <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">10. Contact</h2>
+    <p style="margin-bottom:0;">For privacy-related questions or data deletion requests, contact us at <a href="mailto:support@tenderai.in" style="color:var(--blue);font-weight:600;">support@tenderai.in</a>.</p>
+
+  </div>
+
+</div>
+{% endblock %}

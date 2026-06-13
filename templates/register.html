@@ -1,45 +1,40 @@
 {% extends "base.html" %}
-{% block title %}Register — Tender AI{% endblock %}
+{% block title %}Register — TenderAI{% endblock %}
+{% block meta_description %}Create your free TenderAI account and start analysing tenders in seconds.{% endblock %}
 
 {% block content %}
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
-  :root {
-    --navy: #0a1628;
-    --navy-mid: #112240;
-    --blue: #1e6fe8;
-    --blue-light: #3b8bff;
-    --surface: #f4f7fd;
-    --white: #ffffff;
-    --border: #dde4f0;
-    --text: #0a1628;
-    --muted: #5a6a8a;
-  }
-
   .register-page {
     font-family: 'DM Sans', sans-serif;
+    min-height: calc(100vh - 64px);
+    display: flex;
+    align-items: stretch;
     background: var(--surface);
-    min-height: 100vh;
   }
 
-  /* ── Hero strip ── */
-  .register-hero {
-    position: relative;
+  .register-left {
+    flex: 1;
     background: var(--navy);
-    padding: 56px 24px 72px;
-    text-align: center;
+    position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 48px;
   }
-  .register-hero::before {
+
+  .register-left::before {
     content: '';
     position: absolute; inset: 0;
     background:
-      radial-gradient(ellipse 60% 60% at 50% 0%, rgba(30,111,232,0.2) 0%, transparent 65%),
-      radial-gradient(ellipse 35% 40% at 90% 80%, rgba(59,139,255,0.08) 0%, transparent 60%);
+      radial-gradient(ellipse 70% 60% at 30% 40%, rgba(30,111,232,0.22) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 50% at 80% 80%, rgba(59,139,255,0.1)  0%, transparent 60%);
     pointer-events: none;
   }
-  .hero-grid {
+
+  .left-grid {
     position: absolute; inset: 0;
     background-image:
       linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
@@ -47,150 +42,98 @@
     background-size: 48px 48px;
     pointer-events: none;
   }
-  .register-hero::after {
-    content: '';
-    position: absolute;
-    bottom: -1px; left: 0; right: 0;
-    height: 56px;
-    background: var(--surface);
-    clip-path: ellipse(55% 100% at 50% 100%);
-  }
-  .register-hero-inner {
-    position: relative;
-    max-width: 560px; margin: 0 auto;
-    animation: fadeUp 0.5s ease both;
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(30,111,232,0.15);
-    border: 1px solid rgba(30,111,232,0.3);
-    border-radius: 100px; padding: 6px 18px;
+
+  .left-content { position: relative; max-width: 400px; }
+
+  .left-logo {
     font-family: 'Sora', sans-serif;
-    font-size: 11px; font-weight: 600;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    color: #7eb8ff; margin-bottom: 20px;
+    font-size: 1.5rem; font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.03em;
+    margin-bottom: 48px;
+    text-decoration: none;
+    display: inline-block;
   }
-  .hero-badge span {
-    width: 6px; height: 6px;
-    background: var(--blue-light); border-radius: 50%;
-    animation: pulse 2s ease infinite;
-  }
-  .register-hero h1 {
+  .left-logo em { font-style: normal; color: var(--blue-light); }
+
+  .left-content h2 {
     font-family: 'Sora', sans-serif;
-    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
     font-weight: 800; color: var(--white);
-    letter-spacing: -0.03em; margin-bottom: 10px;
-    line-height: 1.15;
+    letter-spacing: -0.03em;
+    line-height: 1.15; margin-bottom: 16px;
   }
-  .register-hero h1 em { font-style: normal; color: var(--blue-light); }
-  .register-hero p {
-    color: rgba(255,255,255,0.5);
-    font-size: 0.92rem; line-height: 1.7; font-weight: 300;
+  .left-content h2 em { font-style: normal; color: var(--blue-light); }
+
+  .left-content p {
+    font-size: 0.92rem; color: rgba(255,255,255,0.5);
+    line-height: 1.7; margin-bottom: 40px;
   }
 
-  /* ── Body ── */
-  .register-body {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 56px 24px 80px;
-  }
-
-  /* ── Progress steps ── */
-  .reg-steps {
-    display: flex; align-items: center;
-    justify-content: center; gap: 0;
-    margin-bottom: 40px;
-    animation: fadeUp 0.5s 0.08s ease both;
-  }
-  .reg-step {
-    display: flex; align-items: center; gap: 8px;
-    font-family: 'Sora', sans-serif;
-    font-size: 0.8rem; font-weight: 700;
-    color: var(--muted);
-  }
-  .reg-step.active { color: var(--blue); }
-  .reg-step.done   { color: var(--navy); }
-  .step-circle {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.75rem; font-weight: 700;
-    border: 2px solid var(--border);
-    background: var(--white); color: var(--muted);
-    flex-shrink: 0;
-  }
-  .reg-step.active .step-circle {
-    border-color: var(--blue);
-    background: var(--blue); color: var(--white);
-  }
-  .step-line {
-    flex: 1; height: 2px;
-    background: var(--border);
-    margin: 0 12px; max-width: 80px;
-  }
-
-  /* ── Form card ── */
-  .register-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 22px;
-    box-shadow: 0 4px 28px rgba(10,22,40,0.07);
-    overflow: hidden;
-    animation: fadeUp 0.5s 0.16s ease both;
-  }
-
-  /* Form sections */
-  .form-section { padding: 32px 36px 0; }
-
-  .section-header {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 22px;
-  }
-  .section-icon {
-    width: 34px; height: 34px;
+  .left-features { display: flex; flex-direction: column; gap: 14px; }
+  .left-feat { display: flex; align-items: center; gap: 12px; }
+  .left-feat-icon {
+    width: 36px; height: 36px;
+    background: rgba(30,111,232,0.18);
+    border: 1px solid rgba(30,111,232,0.25);
     border-radius: 9px;
-    background: linear-gradient(135deg, rgba(30,111,232,0.1), rgba(59,139,255,0.07));
     display: flex; align-items: center; justify-content: center;
     font-size: 15px; flex-shrink: 0;
   }
-  .section-title {
+  .left-feat p { font-size: 0.85rem; color: rgba(255,255,255,0.65); margin: 0; line-height: 1.4; }
+  .left-feat strong { color: rgba(255,255,255,0.9); font-weight: 600; }
+
+  .register-right {
+    width: 520px; flex-shrink: 0;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 40px 36px;
+    background: var(--white);
+    overflow-y: auto;
+  }
+
+  .register-form-wrap {
+    width: 100%; max-width: 420px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .form-eyebrow {
     font-family: 'Sora', sans-serif;
-    font-size: 0.92rem; font-weight: 700;
-    color: var(--navy); letter-spacing: -0.01em;
-  }
-  .section-title-line {
-    flex: 1; height: 1px; background: var(--border);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 10px;
   }
 
-  /* Grid */
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+  .form-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.5rem; font-weight: 800;
+    color: var(--navy); letter-spacing: -0.03em;
+    margin-bottom: 6px; line-height: 1.15;
   }
-  .col-span-2 { grid-column: span 2; }
 
-  /* Field */
-  .field { display: flex; flex-direction: column; }
+  .form-subtitle {
+    font-size: 0.88rem; color: var(--muted);
+    margin-bottom: 24px; line-height: 1.5;
+  }
 
-  .field-label {
+  .section-label {
     font-family: 'Sora', sans-serif;
     font-size: 0.78rem; font-weight: 700;
-    color: var(--text); margin-bottom: 7px;
-    letter-spacing: 0.01em;
-    display: flex; align-items: center; gap: 5px;
-  }
-  .field-label .req {
-    color: var(--blue); font-size: 0.85rem; line-height: 1;
-  }
-  .field-label .hint {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.72rem; font-weight: 400;
-    color: #b0bdd0; letter-spacing: 0;
+    color: var(--blue); text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
   }
 
-  .field-input,
-  .field-textarea {
+  .field { margin-bottom: 14px; }
+
+  .field-label {
+    display: block;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.78rem; font-weight: 700;
+    color: var(--text); margin-bottom: 6px;
+  }
+
+  .field-input {
     width: 100%;
     border: 1.5px solid var(--border);
     border-radius: 11px;
@@ -202,257 +145,241 @@
     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     box-sizing: border-box;
   }
-  .field-input:focus,
-  .field-textarea:focus {
+  .field-input:focus {
     outline: none;
     border-color: var(--blue);
     background: var(--white);
     box-shadow: 0 0 0 3px rgba(30,111,232,0.1);
   }
-  .field-input::placeholder,
-  .field-textarea::placeholder { color: #c4cdd8; }
-  .field-textarea { resize: vertical; line-height: 1.6; }
+  .field-input::placeholder { color: #b0bdd0; }
 
-  /* Section divider */
-  .form-section-divider {
-    height: 1px; background: var(--border);
-    margin: 28px 36px 0;
-  }
-
-  /* ── Footer ── */
-  .register-footer {
-    padding: 28px 36px 36px;
-  }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
   .submit-btn {
     width: 100%;
-    background: var(--blue); color: var(--white);
-    border: none; padding: 15px;
+    background: var(--blue);
+    color: var(--white);
+    border: none;
+    padding: 14px;
     border-radius: 12px;
     font-family: 'Sora', sans-serif;
     font-size: 0.95rem; font-weight: 700;
-    cursor: pointer; letter-spacing: 0.01em;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
+    cursor: pointer;
+    letter-spacing: 0.01em;
     transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-    box-shadow: 0 3px 16px rgba(30,111,232,0.3);
-    margin-bottom: 20px;
+    box-shadow: 0 3px 14px rgba(30,111,232,0.28);
   }
   .submit-btn:hover {
     background: var(--blue-light);
     transform: translateY(-1px);
-    box-shadow: 0 7px 22px rgba(30,111,232,0.36);
+    box-shadow: 0 6px 20px rgba(30,111,232,0.35);
   }
 
-  .footer-note {
+  .terms-check {
+    display: flex; align-items: flex-start; gap: 8px;
+    margin-bottom: 18px; font-size: 0.82rem; color: var(--muted);
+    line-height: 1.5;
+  }
+  .terms-check input { margin-top: 3px; cursor: pointer; }
+  .terms-check a { color: var(--blue); font-weight: 600; text-decoration: none; }
+  .terms-check a:hover { text-decoration: underline; }
+
+  .form-footer {
     text-align: center;
-    font-size: 0.82rem; color: var(--muted);
+    font-size: 0.85rem; color: var(--muted);
+    margin-top: 20px;
   }
-  .footer-note a {
-    color: var(--blue); font-weight: 600;
-    text-decoration: none;
-  }
-  .footer-note a:hover { text-decoration: underline; }
+  .form-footer a { color: var(--blue); font-weight: 600; text-decoration: none; }
+  .form-footer a:hover { text-decoration: underline; }
 
-  .trust-chips {
+  .trust-row {
     display: flex; justify-content: center;
-    align-items: center; gap: 20px;
-    flex-wrap: wrap; margin-top: 18px;
+    align-items: center; gap: 16px;
+    flex-wrap: wrap; margin-top: 20px;
   }
   .trust-chip {
     display: flex; align-items: center; gap: 5px;
     font-size: 0.74rem; color: #9ca3af; font-weight: 500;
   }
 
-  /* ── Animations ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(18px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50%       { opacity: 0.45; transform: scale(0.75); }
-  }
 
-  @media (max-width: 600px) {
-    .form-grid { grid-template-columns: 1fr; }
-    .col-span-2 { grid-column: span 1; }
-    .form-section { padding: 20px 20px 0; }
-    .form-section-divider { margin: 24px 20px 0; }
-    .register-footer { padding: 24px 20px; }
-    .reg-steps { gap: 0; }
-    .step-line { max-width: 40px; }
+  @media (max-width: 900px) {
+    .register-page { flex-direction: column; }
+    .register-left { display: none; }
+    .register-right { width: 100%; min-height: calc(100vh - 64px); padding: 36px 24px; }
   }
 </style>
 
 <div class="register-page">
-
-  <!-- Hero -->
-  <section class="register-hero">
-    <div class="hero-grid"></div>
-    <div class="register-hero-inner">
-      <div class="hero-badge"><span></span> Get Started Free</div>
-      <h1>Create your <em>TenderAI</em> account</h1>
-      <p>Fill in your details below. The more accurate your profile, the better your tender matches.</p>
-    </div>
-  </section>
-
-  <div class="register-body">
-
-    <!-- Progress indicator -->
-    <div class="reg-steps">
-      <div class="reg-step active">
-        <div class="step-circle">1</div>
-        Account
-      </div>
-      <div class="step-line"></div>
-      <div class="reg-step">
-        <div class="step-circle">2</div>
-        Company
-      </div>
-      <div class="step-line"></div>
-      <div class="reg-step">
-        <div class="step-circle">3</div>
-        Done
+  <div class="register-left">
+    <div class="left-grid"></div>
+    <div class="left-content">
+      <a href="/" class="left-logo"><em>Tender</em>AI</a>
+      <h2>Start winning <em>more tenders</em></h2>
+      <p>Create your free account and get AI-powered bid recommendations in seconds. The more accurate your profile, the better your analysis.</p>
+      <div class="left-features">
+        <div class="left-feat">
+          <div class="left-feat-icon">🎯</div>
+          <p><strong>Eligibility score</strong> — know if you qualify before bidding</p>
+        </div>
+        <div class="left-feat">
+          <div class="left-feat-icon">📌</div>
+          <p><strong>Citation-backed</strong> — every finding linked to the source</p>
+        </div>
+        <div class="left-feat">
+          <div class="left-feat-icon">⚡</div>
+          <p><strong>Results in seconds</strong> — upload and decide</p>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="register-card">
+  <div class="register-right">
+    <div class="register-form-wrap">
+      <p class="form-eyebrow">Get started free</p>
+      <h1 class="form-title">Create your TenderAI account</h1>
+      <p class="form-subtitle">Fill in your details below. You can always update your profile later.</p>
+
       <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-        <!-- ── Section 1: Account Details ── -->
-        <div class="form-section">
-          <div class="section-header">
-            <div class="section-icon">🔐</div>
-            <p class="section-title">Account Details</p>
-            <div class="section-title-line"></div>
+        <!-- Account Details -->
+        <div class="section-label">🔐 Account Details</div>
+
+        <div class="field">
+          <label class="field-label" for="reg-email">Email Address *</label>
+          <input id="reg-email" type="email" name="email" required autocomplete="email"
+            class="field-input" placeholder="you@company.com"/>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="reg-password">Password *</label>
+            <input id="reg-password" type="password" name="password" required autocomplete="new-password"
+              class="field-input" placeholder="Min. 8 characters" minlength="8"/>
           </div>
-          <div class="form-grid">
-            <div class="field">
-              <label class="field-label">
-                Email <span class="req">*</span>
-              </label>
-              <input type="email" name="email" required
-                placeholder="you@company.com"
-                class="field-input"/>
-            </div>
-            <div class="field">
-              <label class="field-label">
-                Password <span class="req">*</span>
-              </label>
-              <input type="password" name="password" required
-                placeholder="Min. 8 characters"
-                class="field-input"/>
-            </div>
+          <div class="field">
+            <label class="field-label" for="reg-confirm">Confirm Password *</label>
+            <input id="reg-confirm" type="password" name="confirm_password" required autocomplete="new-password"
+              class="field-input" placeholder="Re-enter password"/>
           </div>
         </div>
 
-        <div class="form-section-divider"></div>
+        <div class="divider"></div>
 
-        <!-- ── Section 2: Company Details ── -->
-        <div class="form-section">
-          <div class="section-header">
-            <div class="section-icon">🏢</div>
-            <p class="section-title">Company Details</p>
-            <div class="section-title-line"></div>
+        <!-- Company Details -->
+        <div class="section-label">🏢 Company Details</div>
+
+        <div class="field">
+          <label class="field-label" for="reg-company">Company Name *</label>
+          <input id="reg-company" name="company_name" required autocomplete="organization"
+            class="field-input" placeholder="e.g. Acme IT Solutions Pvt Ltd"/>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="reg-regnum">Registration Number</label>
+            <input id="reg-regnum" name="registration_number"
+              class="field-input" placeholder="e.g. U72200MH2020PTC"/>
           </div>
-          <div class="form-grid">
-            <div class="field">
-              <label class="field-label">
-                Company Name <span class="req">*</span>
-              </label>
-              <input type="text" name="company_name" required
-                placeholder="e.g. Mehta Constructions Pvt Ltd"
-                class="field-input"/>
-            </div>
-            <div class="field">
-              <label class="field-label">Registration Number</label>
-              <input type="text" name="registration_number"
-                placeholder="CIN / LLPIN"
-                class="field-input"/>
-            </div>
-            <div class="field">
-              <label class="field-label">PAN Number</label>
-              <input type="text" name="pan_number"
-                placeholder="ABCDE1234F"
-                class="field-input"/>
-            </div>
-            <div class="field">
-              <label class="field-label">Annual Turnover <span class="hint">(₹ Lakhs)</span></label>
-              <input type="number" name="turnover"
-                placeholder="e.g. 500"
-                class="field-input"/>
-            </div>
-            <div class="field">
-              <label class="field-label">Years of Experience</label>
-              <input type="number" name="experience"
-                placeholder="e.g. 8"
-                class="field-input"/>
-            </div>
-            <div class="field">
-              <label class="field-label">Employee Count</label>
-              <input type="number" name="employee_count"
-                placeholder="e.g. 45"
-                class="field-input"/>
-            </div>
-            <div class="field">
-              <label class="field-label">Primary Domain</label>
-              <input type="text" name="domain"
-                placeholder="e.g. Construction, IT, Healthcare"
-                class="field-input"/>
-            </div>
-            <div class="field">
-              <label class="field-label">Sub Domains <span class="hint">(comma separated)</span></label>
-              <input type="text" name="sub_domains"
-                placeholder="e.g. Roads, Bridges, Drainage"
-                class="field-input"/>
-            </div>
-            <div class="field">
-              <label class="field-label">Company Email</label>
-              <input type="email" name="company_email"
-                placeholder="info@yourcompany.com"
-                class="field-input"/>
-            </div>
-            <div class="field">
-              <label class="field-label">Phone</label>
-              <input type="text" name="phone"
-                placeholder="+91 98765 43210"
-                class="field-input"/>
-            </div>
-            <div class="field col-span-2">
-              <label class="field-label">Certifications <span class="hint">(ISO, etc.)</span></label>
-              <input type="text" name="certifications"
-                placeholder="e.g. ISO 9001, ISO 14001, MSME"
-                class="field-input"/>
-            </div>
-            <div class="field col-span-2">
-              <label class="field-label">Address</label>
-              <textarea name="address" rows="2"
-                class="field-textarea"
-                placeholder="Registered office address"></textarea>
-            </div>
+          <div class="field">
+            <label class="field-label" for="reg-pan">PAN Number</label>
+            <input id="reg-pan" name="pan_number" maxlength="10"
+              class="field-input" placeholder="ABCDE1234F" style="text-transform:uppercase;"/>
           </div>
         </div>
 
-        <!-- Footer -->
-        <div class="register-footer">
-          <button type="submit" class="submit-btn">
-            Create Account
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <p class="footer-note">
-            Already have an account? <a href="/login">Log in</a>
-          </p>
-          <div class="trust-chips">
-            <div class="trust-chip">🔒 Secure signup</div>
-            <div class="trust-chip">✅ Free to start</div>
-            <div class="trust-chip">🇮🇳 Built for India</div>
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="reg-turnover">Annual Turnover (₹ Lakhs)</label>
+            <input id="reg-turnover" name="turnover" type="number"
+              class="field-input" placeholder="e.g. 200"/>
+          </div>
+          <div class="field">
+            <label class="field-label" for="reg-exp">Years of Experience</label>
+            <input id="reg-exp" name="experience" type="number"
+              class="field-input" placeholder="e.g. 5"/>
           </div>
         </div>
 
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="reg-employees">Employee Count</label>
+            <input id="reg-employees" name="employee_count" type="number"
+              class="field-input" placeholder="e.g. 25"/>
+          </div>
+          <div class="field">
+            <label class="field-label" for="reg-domain">Primary Domain *</label>
+            <input id="reg-domain" name="domain" required
+              class="field-input" placeholder="e.g. IT Services"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="reg-subdomains">Sub Domains (comma separated)</label>
+          <input id="reg-subdomains" name="sub_domains"
+            class="field-input" placeholder="e.g. Web Development, Cloud, Networking"/>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="reg-cemail">Company Email</label>
+            <input id="reg-cemail" name="company_email" type="email" autocomplete="email"
+              class="field-input" placeholder="contact@company.com"/>
+          </div>
+          <div class="field">
+            <label class="field-label" for="reg-phone">Phone</label>
+            <input id="reg-phone" name="phone" type="tel" autocomplete="tel"
+              class="field-input" placeholder="+91 98765 43210"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="reg-certs">Certifications (ISO, etc.)</label>
+          <input id="reg-certs" name="certifications"
+            class="field-input" placeholder="e.g. ISO 9001, ISO 27001"/>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="reg-address">Address</label>
+          <input id="reg-address" name="address" autocomplete="street-address"
+            class="field-input" placeholder="City, State"/>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Terms -->
+        <div class="terms-check">
+          <input type="checkbox" name="terms_agreed" value="1" required id="terms-check">
+          <label for="terms-check">
+            I agree to the <a href="/terms" target="_blank">Terms of Service</a> and
+            <a href="/privacy" target="_blank">Privacy Policy</a>
+          </label>
+        </div>
+
+        <button type="submit" class="submit-btn">Create Account</button>
       </form>
-    </div>
 
+      <div class="form-footer">
+        Already have an account? <a href="/login">Log in</a>
+      </div>
+
+      <div class="trust-row">
+        <div class="trust-chip">🔒 Secure signup</div>
+        <div class="trust-chip">✅ Free to start</div>
+        <div class="trust-chip">🇮🇳 Built for India</div>
+      </div>
+    </div>
   </div>
 </div>
-
 {% endblock %}

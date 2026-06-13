@@ -1,31 +1,19 @@
 {% extends "base.html" %}
-{% block title %}Login — Tender AI{% endblock %}
+{% block title %}Login — TenderAI{% endblock %}
+{% block meta_description %}Log in to your TenderAI account to access tender analyses and bid recommendations.{% endblock %}
 
 {% block content %}
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
-  :root {
-    --navy: #0a1628;
-    --navy-mid: #112240;
-    --blue: #1e6fe8;
-    --blue-light: #3b8bff;
-    --surface: #f4f7fd;
-    --white: #ffffff;
-    --border: #dde4f0;
-    --text: #0a1628;
-    --muted: #5a6a8a;
-  }
-
   .login-page {
     font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
+    min-height: calc(100vh - 64px);
     display: flex;
     align-items: stretch;
     background: var(--surface);
   }
 
-  /* ── Left panel ── */
   .login-left {
     flex: 1;
     background: var(--navy);
@@ -55,10 +43,7 @@
     pointer-events: none;
   }
 
-  .left-content {
-    position: relative;
-    max-width: 400px;
-  }
+  .left-content { position: relative; max-width: 400px; }
 
   .left-logo {
     font-family: 'Sora', sans-serif;
@@ -85,13 +70,9 @@
     line-height: 1.7; margin-bottom: 40px;
   }
 
-  .left-features {
-    display: flex; flex-direction: column; gap: 14px;
-  }
+  .left-features { display: flex; flex-direction: column; gap: 14px; }
 
-  .left-feat {
-    display: flex; align-items: center; gap: 12px;
-  }
+  .left-feat { display: flex; align-items: center; gap: 12px; }
   .left-feat-icon {
     width: 36px; height: 36px;
     background: rgba(30,111,232,0.18);
@@ -100,26 +81,18 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 15px; flex-shrink: 0;
   }
-  .left-feat p {
-    font-size: 0.85rem; color: rgba(255,255,255,0.65);
-    margin: 0; line-height: 1.4;
-  }
+  .left-feat p { font-size: 0.85rem; color: rgba(255,255,255,0.65); margin: 0; line-height: 1.4; }
   .left-feat strong { color: rgba(255,255,255,0.9); font-weight: 600; }
 
-  /* ── Right panel (form) ── */
   .login-right {
-    width: 480px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 480px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
     padding: 48px 40px;
     background: var(--white);
   }
 
   .login-form-wrap {
-    width: 100%;
-    max-width: 380px;
+    width: 100%; max-width: 380px;
     animation: fadeUp 0.5s ease both;
   }
 
@@ -149,7 +122,6 @@
     font-family: 'Sora', sans-serif;
     font-size: 0.8rem; font-weight: 700;
     color: var(--text); margin-bottom: 8px;
-    letter-spacing: 0.01em;
   }
 
   .field-input {
@@ -172,7 +144,18 @@
   }
   .field-input::placeholder { color: #b0bdd0; }
 
-  .field-last { margin-bottom: 28px; }
+  .field-last { margin-bottom: 8px; }
+
+  .forgot-link {
+    display: block;
+    text-align: right;
+    font-size: 0.82rem;
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 28px;
+  }
+  .forgot-link:hover { text-decoration: underline; }
 
   .submit-btn {
     width: 100%;
@@ -199,11 +182,7 @@
     font-size: 0.85rem; color: var(--muted);
     margin-top: 24px;
   }
-  .form-footer a {
-    color: var(--blue); font-weight: 600;
-    text-decoration: none;
-    transition: text-decoration 0.15s;
-  }
+  .form-footer a { color: var(--blue); font-weight: 600; text-decoration: none; }
   .form-footer a:hover { text-decoration: underline; }
 
   .form-divider {
@@ -223,27 +202,19 @@
     font-size: 0.74rem; color: #9ca3af; font-weight: 500;
   }
 
-  /* ── Animations ── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(18px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── Responsive — stack on mobile ── */
   @media (max-width: 800px) {
     .login-page { flex-direction: column; }
     .login-left { display: none; }
-    .login-right {
-      width: 100%;
-      min-height: 100vh;
-      padding: 48px 24px;
-    }
+    .login-right { width: 100%; min-height: calc(100vh - 64px); padding: 48px 24px; }
   }
 </style>
 
 <div class="login-page">
-
-  <!-- Left decorative panel -->
   <div class="login-left">
     <div class="left-grid"></div>
     <div class="left-content">
@@ -267,27 +238,25 @@
     </div>
   </div>
 
-  <!-- Right form panel -->
   <div class="login-right">
     <div class="login-form-wrap">
-
       <p class="form-eyebrow">Welcome back</p>
       <h1 class="form-title">Log in to TenderAI</h1>
       <p class="form-subtitle">Enter your credentials to access your account.</p>
 
       <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="field">
-          <label class="field-label">Email Address</label>
-          <input type="email" name="email" required
-            class="field-input"
-            placeholder="you@company.com"/>
+          <label class="field-label" for="login-email">Email Address</label>
+          <input id="login-email" type="email" name="email" required autocomplete="email"
+            class="field-input" placeholder="you@company.com"/>
         </div>
         <div class="field field-last">
-          <label class="field-label">Password</label>
-          <input type="password" name="password" required
-            class="field-input"
-            placeholder="••••••••"/>
+          <label class="field-label" for="login-password">Password</label>
+          <input id="login-password" type="password" name="password" required autocomplete="current-password"
+            class="field-input" placeholder="••••••••"/>
         </div>
+        <a href="/forgot-password" class="forgot-link">Forgot password?</a>
         <button type="submit" class="submit-btn">Log In</button>
       </form>
 
@@ -306,10 +275,7 @@
         <div class="trust-chip">🇮🇳 Built for India</div>
         <div class="trust-chip">✅ Free to start</div>
       </div>
-
     </div>
   </div>
-
 </div>
-
 {% endblock %}

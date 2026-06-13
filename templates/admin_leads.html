@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Admin Leads — TenderAI{% endblock %}
+
+{% block content %}
+<div style="max-width:1000px;margin:0 auto;padding:32px 24px;">
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+    <div>
+      <h1 style="font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:700;margin:0;">Lead Management</h1>
+      <p style="color:var(--muted);font-size:0.9rem;margin-top:4px;">Track and manage expert review leads.</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <a href="/admin" style="padding:8px 16px;border-radius:8px;font-size:0.82rem;font-weight:500;
+         background:white;color:var(--muted);border:1px solid var(--border);text-decoration:none;">← Back to Admin</a>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+    <a href="/admin/leads" style="padding:6px 14px;border-radius:6px;font-size:0.82rem;font-weight:500;text-decoration:none;
+       {% if not current_filter %}background:var(--blue);color:white;{% else %}background:white;color:var(--muted);border:1px solid var(--border);{% endif %}">
+      All
+    </a>
+    {% for status in ['new', 'expert_review_requested', 'call_booked', 'contacted', 'paid_review', 'bid_support', 'closed', 'not_interested'] %}
+    <a href="/admin/leads?status={{ status }}" style="padding:6px 14px;border-radius:6px;font-size:0.82rem;font-weight:500;text-decoration:none;
+       {% if current_filter == status %}background:var(--blue);color:white;{% else %}background:white;color:var(--muted);border:1px solid var(--border);{% endif %}">
+      {{ status.replace('_', ' ').title() }}
+    </a>
+    {% endfor %}
+  </div>
+
+  {% if not leads %}
+  <div style="text-align:center;padding:48px 24px;background:var(--white);border-radius:14px;border:1px solid var(--border);color:var(--muted);">
+    No leads found.
+  </div>
+  {% else %}
+
+  <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;background:var(--white);border-radius:14px;overflow:hidden;border:1px solid var(--border);">
+      <thead>
+        <tr style="background:var(--surface);text-align:left;font-size:0.8rem;font-weight:600;color:var(--muted);">
+          <th style="padding:12px 12px;">Company</th>
+          <th style="padding:12px 12px;">Contact</th>
+          <th style="padding:12px 12px;">Tender</th>
+          <th style="padding:12px 12px;">Fit</th>
+          <th style="padding:12px 12px;">Rec.</th>
+          <th style="padding:12px 12px;">Status</th>
+          <th style="padding:12px 12px;">Notes</th>
+          <th style="padding:12px 12px;">Date</th>
+          <th style="padding:12px 12px;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lead in leads %}
+        {% set created = lead.created_at|string %}
+        <tr style="border-top:1px solid var(--border);font-size:0.82rem;vertical-align:top;">
+          <td style="padding:10px 12px;font-weight:500;">{{ lead.company_name or '—' }}</td>
+          <td style="padding:10px 12px;">
+            {% if lead.contact_name %}{{ lead.contact_name }}<br>{% endif %}
+            {% if lead.email %}<span style="color:var(--blue);">{{ lead.email }}</span><br>{% endif %}
+            {% if lead.phone %}{{ lead.phone }}{% endif %}
+          </td>
+          <td style="padding:10px 12px;">
+            {{ (lead.tender_title or '—')[:35] }}
+            {% if lead.tender_deadline %}<br><span style="color:var(--muted);font-size:0.75rem;">📅 {{ lead.tender_deadline }}</span>{% endif %}
+          </td>
+          <td style="padding:10px 12px;font-weight:600;">{{ lead.fit_score or '—' }}</td>
+          <td style="padding:10px 12px;font-size:0.78rem;">{{ lead.recommendation or '—' }}</td>
+          <td style="padding:10px 12px;">
+            <span style="padding:3px 8px;border-radius:5px;font-size:0.72rem;font-weight:600;
+              {% if lead.status == 'new' %}background:#dbeafe;color:#1e40af;
+              {% elif lead.status == 'expert_review_requested' %}background:#fef9c3;color:#854d0e;
+              {% elif lead.status == 'call_booked' %}background:#dcfce7;color:#166534;
+              {% elif lead.status == 'paid_review' %}background:#ede9fe;color:#6d28d9;
+              {% elif lead.status == 'bid_support' %}background:#dbeafe;color:#1e40af;
+              {% elif lead.status == 'closed' %}background:#f3f4f6;color:#4b5563;
+              {% elif lead.status == 'not_interested' %}background:#fecaca;color:#991b1b;
+              {% else %}background:#f3f4f6;color:#4b5563;{% endif %}">
+              {{ lead.status.replace('_', ' ').title() }}
+            </span>
+          </td>
+          <td style="padding:10px 12px;max-width:150px;overflow:hidden;text-overflow:ellipsis;font-size:0.78rem;color:var(--muted);">
+            {{ lead.notes or '—' }}
+          </td>
+          <td style="padding:10px 12px;font-size:0.78rem;color:var(--muted);">{{ created[:10] }}</td>
+          <td style="padding:10px 12px;">
+            <form method="POST" action="/admin/leads/{{ lead.id }}/update" style="display:flex;flex-direction:column;gap:4px;">
+              <select name="status" style="font-size:0.75rem;padding:4px 6px;border:1px solid var(--border);border-radius:4px;">
+                {% for s in ['new', 'contacted', 'call_booked', 'expert_review_requested', 'paid_review', 'bid_support', 'closed', 'not_interested'] %}
+                <option value="{{ s }}" {% if lead.status == s %}selected{% endif %}>{{ s.replace('_', ' ').title() }}</option>
+                {% endfor %}
+              </select>
+              <input name="notes" value="{{ lead.notes or '' }}" placeholder="Notes"
+                style="font-size:0.75rem;padding:4px 6px;border:1px solid var(--border);border-radius:4px;">
+              <button type="submit" style="font-size:0.72rem;padding:4px 8px;background:var(--blue);color:white;border:none;border-radius:4px;cursor:pointer;">
+                Update
+              </button>
+            </form>
+            {% if lead.analysis_id %}
+            <a href="/report/{{ lead.analysis_id }}" target="_blank" style="font-size:0.72rem;color:var(--blue);margin-top:4px;display:inline-block;">View Report</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% endif %}
+</div>
+{% endblock %}

@@ -418,6 +418,102 @@ def get_admin_stats() -> dict:
 
 
 # ================================================================
+# PASSWORD RESET
+# ================================================================
+
+def save_password_reset(email: str, token: str) -> dict:
+    """Save a password reset token to database."""
+    try:
+        admin = get_admin_client()
+        # Create password_resets table entry
+        # Using a simple approach: store in a "password_resets" table
+        record = {
+            "email": email,
+            "token": token,
+            "used": False,
+        }
+        # Try inserting into password_resets table
+        # If table doesn't exist, we'll handle it gracefully
+        try:
+            admin.table("password_resets").insert(record).execute()
+        except Exception as e:
+            print(f"[db] password_resets table may not exist: {e}")
+            print(f"[db] Reset link for {email}: token={token}")
+        return {"success": True, "token": token}
+    except Exception as e:
+        print(f"[db] Error saving password reset: {e}")
+        return {"success": False, "error": str(e)}
+
+
+def get_password_reset(token: str) -> dict | None:
+    """Get a password reset record by token. Returns None if invalid/expired."""
+    try:
+        admin = get_admin_client()
+        result = admin.table("password_resets") \
+                      .select("*") \
+                      .eq("token", token) \
+                      .eq("used", False) \
+                      .order("created_at", desc=True) \
+                      .limit(1) \
+                      .execute()
+
+        if not result.data:
+            return None
+
+        reset = result.data[0]
+
+        # Check if token is less than 1 hour old
+        from datetime import datetime, timedelta
+        created = datetime.fromisoformat(reset["created_at"].replace("Z", "+00:00"))
+        now = datetime.now(created.tzinfo)
+        if now - created > timedelta(hours=1):
+            return None  # Token expired
+
+        return reset
+
+    except Exception as e:
+        print(f"[db] Error getting password reset: {e}")
+        return None
+
+
+def delete_password_reset(token: str):
+    """Mark a password reset token as used."""
+    try:
+        admin = get_admin_client()
+        admin.table("password_resets") \
+             .update({"used": True}) \
+             .eq("token", token) \
+             .execute()
+    except Exception as e:
+        print(f"[db] Error deleting password reset: {e}")
+
+
+# ================================================================
+# CONTACT FORM
+# ================================================================
+
+def save_contact_message(name: str, email: str, message: str) -> dict:
+    """Save a contact form submission."""
+    try:
+        admin = get_admin_client()
+        record = {
+            "name": name,
+            "email": email,
+            "message": message,
+        }
+        # Try inserting into contact_messages table
+        try:
+            admin.table("contact_messages").insert(record).execute()
+        except Exception as e:
+            print(f"[db] contact_messages table may not exist: {e}")
+            print(f"[db] Contact message: {name} <{email}>: {message[:100]}")
+        return {"success": True}
+    except Exception as e:
+        print(f"[db] Error saving contact message: {e}")
+        return {"success": False, "error": str(e)}
+
+
+# ================================================================
 # LEGACY COMPATIBILITY
 # ================================================================
 

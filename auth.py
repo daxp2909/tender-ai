@@ -1,15 +1,11 @@
 """
 TenderAI — Auth Module (auth.py)
 ===================================
-Handles ONLY user registration and login.
-All other database operations are in db.py.
-
-Why split? Clean separation of concerns:
-  auth.py  → who are you? (register, login)
-  db.py    → what do you have? (profile, analyses, leads, feedback)
+Handles user registration, login, and password management.
 """
 
 import os
+import secrets
 import bcrypt
 from supabase import create_client, Client
 
@@ -34,7 +30,6 @@ def register_user(email: str, password: str) -> dict:
     try:
         admin = get_admin_client()
 
-        # Check if email already exists
         existing = admin.table("users") \
                         .select("id") \
                         .eq("email", email) \
@@ -43,13 +38,11 @@ def register_user(email: str, password: str) -> dict:
         if existing.data:
             return {"success": False, "error": "Email already registered"}
 
-        # Hash password with bcrypt
         password_hash = bcrypt.hashpw(
             password.encode("utf-8"),
             bcrypt.gensalt()
         ).decode("utf-8")
 
-        # Insert user
         result = admin.table("users").insert({
             "email": email,
             "password_hash": password_hash,
@@ -67,11 +60,10 @@ def register_user(email: str, password: str) -> dict:
 # ── Login ─────────────────────────────────────────────────────
 
 def login_user(email: str, password: str) -> dict:
-    """Login by checking hashed password. Returns {success, user?} or {success, error?}."""
+    """Login by checking hashed password."""
     try:
         admin = get_admin_client()
 
-        # Find user by email
         result = admin.table("users") \
                       .select("id, email, password_hash, role") \
                       .eq("email", email) \
@@ -82,9 +74,7 @@ def login_user(email: str, password: str) -> dict:
 
         user = result.data[0]
 
-        # Check password
         if bcrypt.checkpw(password.encode("utf-8"), user["password_hash"].encode("utf-8")):
-            # Don't return password_hash to session
             safe_user = {
                 "id": user["id"],
                 "email": user["email"],
@@ -97,3 +87,49 @@ def login_user(email: str, password: str) -> dict:
     except Exception as e:
         print(f"[auth] Login error: {e}")
         return {"success": False, "error": "Login failed. Please try again."}
+
+
+# ── Password Reset ────────────────────────────────────────────
+
+def create_reset_token(email: str) -> str | None:
+    """Create a password reset token. Returns token or None if user not found."""
+    try:
+        admin = get_admin_client()
+
+        # Check if user exists
+        result = admin.table("users") \
+                      .select("id") \
+                      .eq("email", email) \
+                      .execute()
+
+        if not result.data:
+            return None  # User not found — don't reveal this
+
+        token = secrets.token_urlsafe(32)
+        return token
+
+    except Exception as e:
+        print(f"[auth] Create reset token error: {e}")
+        return None
+
+
+def update_password(email: str, new_password: str) -> dict:
+    """Update a user's password."""
+    try:
+        admin = get_admin_client()
+
+        password_hash = bcrypt.hashpw(
+            new_password.encode("utf-8"),
+            bcrypt.gensalt()
+        ).decode("utf-8")
+
+        admin.table("users") \
+             .update({"password_hash": password_hash}) \
+             .eq("email", email) \
+             .execute()
+
+        return {"success": True}
+
+    except Exception as e:
+        print(f"[auth] Update password error: {e}")
+        return {"success": False, "error": str(e)}

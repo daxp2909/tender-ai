@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Company Profile — TenderAI{% endblock %}
+{% block meta_description %}Update your company profile for accurate tender analysis on TenderAI.{% endblock %}
 
 {% block content %}
 <div style="max-width:720px;margin:0 auto;padding:32px 24px;">
@@ -7,60 +8,78 @@
   <h1 style="font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:4px;">Company Profile</h1>
   <p style="color:var(--muted);font-size:0.9rem;margin-bottom:28px;">Complete your profile for accurate tender analysis.</p>
 
+  {% set p = profile or {} %}
+  {# Fix sub_domains: could be list ["a","b"] or string "a,b" or "[]" #}
+  {% if p.sub_domains %}
+    {% if p.sub_domains is string %}
+      {% set sub_domains_val = p.sub_domains.replace('[','').replace(']','').replace('"','').replace("'","") %}
+    {% else %}
+      {% set sub_domains_val = p.sub_domains|join(', ') %}
+    {% endif %}
+  {% else %}
+    {% set sub_domains_val = '' %}
+  {% endif %}
+
   <form method="POST" action="/profile">
-    <!-- ── Basic Info ──────────────────────── -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <!-- Basic Info -->
     <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);margin-bottom:20px;">
       <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 16px;">📋 Basic Information</h2>
 
-      <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Company Name *</label>
-      <input name="company_name" value="{{ profile.company_name if profile else '' }}" required
-        style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;">
+      <label for="company_name" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Company Name *</label>
+      <input id="company_name" name="company_name" value="{{ p.company_name or '' }}" required
+        style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;"
+        autocomplete="organization">
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div>
-          <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Registration Number</label>
-          <input name="registration_number" value="{{ profile.registration_number if profile else '' }}"
+          <label for="registration_number" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Registration Number</label>
+          <input id="registration_number" name="registration_number" value="{{ p.registration_number or '' }}"
             style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;">
         </div>
         <div>
-          <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">PAN Number</label>
-          <input name="pan_number" value="{{ profile.pan_number if profile else '' }}"
-            style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;">
+          <label for="pan_number" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">PAN Number</label>
+          <input id="pan_number" name="pan_number" value="{{ p.pan_number or '' }}" placeholder="ABCDE1234F" maxlength="10"
+            style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;text-transform:uppercase;">
         </div>
       </div>
 
-      <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Company Email</label>
-      <input name="company_email" type="email" value="{{ profile.company_email if profile else '' }}"
-        style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;">
+      <label for="company_email" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Company Email</label>
+      <input id="company_email" name="company_email" type="email" value="{{ p.company_email or '' }}"
+        style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;"
+        autocomplete="email" placeholder="contact@yourcompany.com">
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div>
-          <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Phone</label>
-          <input name="phone" value="{{ profile.phone if profile else '' }}"
-            style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;">
+          <label for="phone" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Phone</label>
+          <input id="phone" name="phone" type="tel" value="{{ p.phone or '' }}" placeholder="+91 98765 43210"
+            style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;"
+            autocomplete="tel">
         </div>
         <div>
-          <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Address</label>
-          <input name="address" value="{{ profile.address if profile else '' }}"
-            style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;">
+          <label for="address" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Address</label>
+          <input id="address" name="address" value="{{ p.address or '' }}"
+            style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;"
+            autocomplete="street-address">
         </div>
       </div>
     </div>
 
-    <!-- ── Business Details ────────────────── -->
+    <!-- Business Details -->
     <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);margin-bottom:20px;">
       <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 16px;">🏢 Business Details</h2>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div>
-          <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Domain / Industry *</label>
-          <input name="domain" value="{{ profile.domain if profile else '' }}" required
+          <label for="domain" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Domain / Industry *</label>
+          <input id="domain" name="domain" value="{{ p.domain or '' }}" required
             style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;"
             placeholder="e.g. IT Services, Construction, Manufacturing">
         </div>
         <div>
-          <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Sub-Domains</label>
-          <input name="sub_domains" value="{{ profile.sub_domains if profile else '' }}"
+          <label for="sub_domains" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Sub-Domains</label>
+          <input id="sub_domains" name="sub_domains" value="{{ sub_domains_val }}"
             style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;"
             placeholder="e.g. Web Development, Cloud, Networking (comma separated)">
         </div>
@@ -68,69 +87,69 @@
 
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
         <div>
-          <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Annual Turnover (₹ Lakhs)</label>
-          <input name="annual_turnover_lakhs" type="number" value="{{ profile.annual_turnover_lakhs if profile else '' }}"
+          <label for="annual_turnover_lakhs" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Annual Turnover (₹ Lakhs)</label>
+          <input id="annual_turnover_lakhs" name="annual_turnover_lakhs" type="number" value="{{ p.annual_turnover_lakhs or '' }}"
             style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;">
         </div>
         <div>
-          <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Years of Experience</label>
-          <input name="years_experience" type="number" value="{{ profile.years_experience if profile else '' }}"
+          <label for="years_experience" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Years of Experience</label>
+          <input id="years_experience" name="years_experience" type="number" value="{{ p.years_experience or '' }}"
             style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;">
         </div>
         <div>
-          <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Employee Count</label>
-          <input name="employee_count" type="number" value="{{ profile.employee_count if profile else '' }}"
+          <label for="employee_count" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Employee Count</label>
+          <input id="employee_count" name="employee_count" type="number" value="{{ p.employee_count or '' }}"
             style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;">
         </div>
       </div>
 
-      <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Certifications</label>
-      <input name="certifications" value="{{ profile.certifications if profile else '' }}"
+      <label for="certifications" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Certifications</label>
+      <input id="certifications" name="certifications" value="{{ p.certifications or '' }}"
         style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;"
         placeholder="e.g. ISO 9001, ISO 27001, CMMI Level 3">
 
-      <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Preferred Tender Size</label>
-      <select name="preferred_tender_size"
+      <label for="preferred_tender_size" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Preferred Tender Size</label>
+      <select id="preferred_tender_size" name="preferred_tender_size"
         style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;background:white;">
         <option value="">Select</option>
-        <option value="under_10l" {% if profile and profile.preferred_tender_size == 'under_10l' %}selected{% endif %}>Under ₹10 Lakhs</option>
-        <option value="10l_50l" {% if profile and profile.preferred_tender_size == '10l_50l' %}selected{% endif %}>₹10L - ₹50L</option>
-        <option value="50l_1cr" {% if profile and profile.preferred_tender_size == '50l_1cr' %}selected{% endif %}>₹50L - ₹1 Cr</option>
-        <option value="1cr_5cr" {% if profile and profile.preferred_tender_size == '1cr_5cr' %}selected{% endif %}>₹1 Cr - ₹5 Cr</option>
-        <option value="above_5cr" {% if profile and profile.preferred_tender_size == 'above_5cr' %}selected{% endif %}>Above ₹5 Cr</option>
+        <option value="under_10l" {% if p.preferred_tender_size == 'under_10l' %}selected{% endif %}>Under ₹10 Lakhs</option>
+        <option value="10l_50l" {% if p.preferred_tender_size == '10l_50l' %}selected{% endif %}>₹10L - ₹50L</option>
+        <option value="50l_1cr" {% if p.preferred_tender_size == '50l_1cr' %}selected{% endif %}>₹50L - ₹1 Cr</option>
+        <option value="1cr_5cr" {% if p.preferred_tender_size == '1cr_5cr' %}selected{% endif %}>₹1 Cr - ₹5 Cr</option>
+        <option value="above_5cr" {% if p.preferred_tender_size == 'above_5cr' %}selected{% endif %}>Above ₹5 Cr</option>
       </select>
 
-      <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Locations Served</label>
-      <input name="locations_served" value="{{ profile.locations_served if profile else '' }}"
+      <label for="locations_served" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Locations Served</label>
+      <input id="locations_served" name="locations_served" value="{{ p.locations_served or '' }}"
         style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;"
         placeholder="e.g. Maharashtra, Karnataka, Pan India">
 
-      <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Major Past Projects</label>
-      <textarea name="major_past_projects" rows="3"
+      <label for="major_past_projects" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">Major Past Projects</label>
+      <textarea id="major_past_projects" name="major_past_projects" rows="3"
         style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:14px;resize:vertical;"
-        placeholder="Brief description of key projects completed">{{ profile.major_past_projects if profile else '' }}</textarea>
+        placeholder="Brief description of key projects completed">{{ p.major_past_projects or '' }}</textarea>
     </div>
 
-    <!-- ── Tender Readiness ────────────────── -->
+    <!-- Tender Readiness -->
     <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);margin-bottom:20px;">
-      <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 16px;">✅ Tender Readiness</h2>
+      <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 8px;">✅ Tender Readiness</h2>
       <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">These fields directly affect your eligibility analysis.</p>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;">
         {% set readiness_fields = [
-          ('gst_available', 'GST Registration', profile.gst_available if profile else False),
-          ('msme_available', 'MSME/Udyam Registration', profile.msme_available if profile else False),
-          ('iso_available', 'ISO Certification', profile.iso_available if profile else False),
-          ('gem_seller', 'GeM Seller Registered', profile.gem_seller if profile else False),
-          ('past_government_tender_experience', 'Past Govt Tender Experience', profile.past_government_tender_experience if profile else False),
-          ('similar_work_certificates_available', 'Similar Work Certificates', profile.similar_work_certificates_available if profile else False),
-          ('audited_financials_available', 'Audited Financials Available', profile.audited_financials_available if profile else False),
-          ('bank_solvency_available', 'Bank Solvency Certificate', profile.bank_solvency_available if profile else False),
+          ('gst_available', 'GST Registration', p.gst_available),
+          ('msme_available', 'MSME/Udyam Registration', p.msme_available),
+          ('iso_available', 'ISO Certification', p.iso_available),
+          ('gem_seller', 'GeM Seller Registered', p.gem_seller),
+          ('past_government_tender_experience', 'Past Govt Tender Experience', p.past_government_tender_experience),
+          ('similar_work_certificates_available', 'Similar Work Certificates', p.similar_work_certificates_available),
+          ('audited_financials_available', 'Audited Financials Available', p.audited_financials_available),
+          ('bank_solvency_available', 'Bank Solvency Certificate', p.bank_solvency_available),
         ] %}
 
         {% for field_id, field_label, field_val in readiness_fields %}
         <div style="display:flex;align-items:center;gap:10px;">
-          <select name="{{ field_id }}"
+          <select id="{{ field_id }}" name="{{ field_id }}"
             style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.88rem;background:white;">
             <option value="no" {% if not field_val %}selected{% endif %}>No</option>
             <option value="yes" {% if field_val %}selected{% endif %}>Yes</option>
@@ -141,14 +160,13 @@
       </div>
 
       <div style="margin-top:14px;">
-        <label style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">OEM/Dealer Authorization</label>
-        <input name="oem_authorization" value="{{ profile.oem_authorization if profile else '' }}"
+        <label for="oem_authorization" style="font-size:0.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;">OEM/Dealer Authorisation</label>
+        <input id="oem_authorization" name="oem_authorization" value="{{ p.oem_authorization or '' }}"
           style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;"
-          placeholder="e.g. Authorized dealer for HP, Dell, etc.">
+          placeholder="e.g. Authorised dealer for HP, Dell, etc.">
       </div>
     </div>
 
-    <!-- ── Submit ──────────────────────────── -->
     <button type="submit"
       style="width:100%;padding:14px;background:var(--blue);color:white;border:none;border-radius:10px;
              font-family:'Sora',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;

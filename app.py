@@ -48,7 +48,7 @@ from analyzer import (
     extract_questions, analyze_tender
 )
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 
 # ── Config ────────────────────────────────────────────────────
 _secret = os.environ.get("FLASK_SECRET_KEY") or os.environ.get("SECRET_KEY")
@@ -65,6 +65,7 @@ app.secret_key = _secret
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("APP_ENV") == "production"
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
 
 # ── CSRF Protection ───────────────────────────────────────────
 app.config["WTF_CSRF_TIME_LIMIT"] = 3600  # 1 hour
@@ -251,12 +252,15 @@ def register():
             }
             save_company_profile(user_id, profile_data)
 
+            # Only set session on success — do NOT touch session on failure
+            # to avoid clearing an existing logged-in session
             session["user_id"] = user_id
             session["user_email"] = email
             session["user_role"] = user.get("role", "user")
             flash("Account created successfully! Welcome to TenderAI.", "success")
             return redirect(url_for("dashboard"))
         else:
+            # On failure, do NOT modify session at all
             flash(result["error"], "error")
 
     return render_template("register.html")
@@ -810,6 +814,16 @@ def rate_limit_exceeded(e):
 @app.route("/health")
 def health():
     return jsonify({"status": "ok"}), 200
+
+
+@app.route("/robots.txt")
+def robots():
+    return app.send_static_file("robots.txt")
+
+
+@app.route("/sitemap.xml")
+def sitemap():
+    return app.send_static_file("sitemap.xml"), 200, {"Content-Type": "application/xml"}
 
 
 # ================================================================

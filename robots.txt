@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /dashboard
+Disallow: /analyze
+Disallow: /history
+Disallow: /profile
+Disallow: /report/
+Disallow: /health
+
+Sitemap: https://tenderai.in/sitemap.xml

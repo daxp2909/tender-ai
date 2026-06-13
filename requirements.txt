@@ -5,3 +5,6 @@ gunicorn
 supabase
 python-dotenv
 bcrypt
+google-generativeai
+requests
+python-dateutil

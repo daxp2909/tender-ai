@@ -4,6 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>{% block title %}Tender AI{% endblock %}</title>
+  <meta name="description" content="AI-powered tender analysis for Indian SMEs. Upload your tender and get a clear bid/no-bid recommendation.">
+
+  <!-- Google Analytics 4 (only if configured) -->
+  {% if ga_id %}
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ ga_id }}');
+  </script>
+  {% endif %}
+
+  <!-- Microsoft Clarity (only if configured) -->
+  {% if clarity_id %}
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "{{ clarity_id }}");
+  </script>
+  {% endif %}
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -32,10 +57,13 @@
       --border: #dde4f0;
       --text: #0a1628;
       --muted: #5a6a8a;
+      --green: #16a34a;
+      --yellow: #ca8a04;
+      --red: #dc2626;
+      --orange: #ea580c;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -61,7 +89,6 @@
       z-index: 50;
       transition: box-shadow 0.2s;
     }
-
     .base-nav.scrolled {
       box-shadow: 0 4px 24px rgba(10,22,40,0.08);
     }
@@ -76,7 +103,6 @@
       justify-content: space-between;
     }
 
-    /* Logo */
     .nav-logo {
       font-family: 'Sora', sans-serif;
       font-size: 1.35rem;
@@ -107,7 +133,6 @@
       flex-shrink: 0;
     }
 
-    /* Nav links */
     .nav-links {
       display: flex;
       align-items: center;
@@ -184,7 +209,6 @@
       transform: translateY(-1px);
     }
 
-    /* Active nav indicator — optional, can add active class from Flask */
     .nav-link.active {
       color: var(--blue);
       background: rgba(30,111,232,0.08);
@@ -197,7 +221,6 @@
       padding: 16px 24px 0;
       width: 100%;
     }
-
     .flash-msg {
       padding: 14px 18px;
       border-radius: 12px;
@@ -220,11 +243,29 @@
       color: #15803d;
       border-color: #bbf7d0;
     }
-
     @keyframes flashIn {
       from { opacity: 0; transform: translateY(-8px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+
+    /* ── Score badges ── */
+    .score-strong { background: #dcfce7; color: #166534; }
+    .score-possible { background: #fef9c3; color: #854d0e; }
+    .score-risky { background: #fed7aa; color: #9a3412; }
+    .score-avoid { background: #fecaca; color: #991b1b; }
+
+    /* ── Recommendation badges ── */
+    .rec-bid { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .rec-bid-caution { background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
+    .rec-do-not-bid { background: #fecaca; color: #991b1b; border: 1px solid #fca5a5; }
+    .rec-bid-partner { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+    .rec-need-info { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; }
+
+    /* ── Status badges ── */
+    .status-pass { background: #dcfce7; color: #166534; }
+    .status-fail { background: #fecaca; color: #991b1b; }
+    .status-partial { background: #fef9c3; color: #854d0e; }
+    .status-check { background: #dbeafe; color: #1e40af; }
 
     /* ── Footer ── */
     .base-footer {
@@ -232,7 +273,6 @@
       border-top: 1px solid var(--border);
       margin-top: 64px;
     }
-
     .footer-inner {
       max-width: 1100px;
       margin: 0 auto;
@@ -242,7 +282,6 @@
       align-items: start;
       gap: 32px;
     }
-
     .footer-brand .footer-logo {
       font-family: 'Sora', sans-serif;
       font-size: 1.15rem;
@@ -254,21 +293,18 @@
       margin-bottom: 8px;
     }
     .footer-brand .footer-logo span { color: var(--blue); }
-
     .footer-brand p {
       font-size: 0.82rem;
       color: var(--muted);
       line-height: 1.6;
       max-width: 300px;
     }
-
     .footer-links {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
       justify-content: flex-end;
     }
-
     .footer-link {
       font-size: 0.82rem;
       color: var(--muted);
@@ -277,7 +313,6 @@
       font-weight: 500;
     }
     .footer-link:hover { color: var(--blue); }
-
     .footer-bottom {
       border-top: 1px solid var(--border);
       padding: 16px 24px;
@@ -288,7 +323,7 @@
       color: #9ca3af;
     }
 
-    /* ── Mobile nav toggle ── */
+    /* ── Mobile nav ── */
     .nav-hamburger {
       display: none;
       flex-direction: column;
@@ -305,7 +340,6 @@
       border-radius: 2px;
       transition: transform 0.2s, opacity 0.2s;
     }
-
     .nav-mobile {
       display: none;
       flex-direction: column;
@@ -328,13 +362,65 @@
       .footer-inner { grid-template-columns: 1fr; }
       .footer-links { justify-content: flex-start; }
     }
+
+    /* ── PRINT STYLES ── */
+    @media print {
+      .base-nav,
+      .base-footer,
+      .nav-hamburger,
+      .nav-mobile,
+      .flash-wrap,
+      .no-print,
+      .print-hide {
+        display: none !important;
+      }
+
+      body {
+        background: white !important;
+        color: black !important;
+        font-size: 11pt;
+      }
+
+      main {
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .print-break {
+        page-break-before: always;
+      }
+
+      table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+      }
+
+      table th, table td {
+        border: 1px solid #ccc !important;
+        padding: 6px 8px !important;
+        font-size: 10pt !important;
+      }
+
+      .report-section {
+        break-inside: avoid;
+      }
+
+      a {
+        color: black !important;
+        text-decoration: none !important;
+      }
+
+      button {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 
 <body>
 
   <!-- Navbar -->
-  <nav class="base-nav" id="baseNav">
+  <nav class="base-nav no-print" id="baseNav">
     <div class="nav-inner">
 
       <a href="/" class="nav-logo">
@@ -349,11 +435,15 @@
           <a href="/analyze"   class="nav-link">Analyze</a>
           <a href="/history"   class="nav-link">History</a>
           <a href="/profile"   class="nav-link">Profile</a>
+          {% if session.get('user_role') == 'admin' %}
+          <a href="/admin"     class="nav-link" style="color:var(--orange);">Admin</a>
+          {% endif %}
           <a href="/logout"    class="nav-btn-logout">Logout</a>
         {% else %}
-          <a href="/about"   class="nav-link">About</a>
-          <a href="/pricing" class="nav-link">Pricing</a>
-          <a href="/contact" class="nav-link">Contact</a>
+          <a href="/about"         class="nav-link">About</a>
+          <a href="/pricing"       class="nav-link">Pricing</a>
+          <a href="/sample-report" class="nav-link">Sample Report</a>
+          <a href="/contact"       class="nav-link">Contact</a>
           <a href="/login"   class="nav-btn-outline">Login</a>
           <a href="/register" class="nav-btn-primary">Get Started</a>
         {% endif %}
@@ -373,11 +463,15 @@
         <a href="/analyze"   class="nav-link">Analyze</a>
         <a href="/history"   class="nav-link">History</a>
         <a href="/profile"   class="nav-link">Profile</a>
+        {% if session.get('user_role') == 'admin' %}
+        <a href="/admin"     class="nav-link">Admin</a>
+        {% endif %}
         <a href="/logout"    class="nav-btn-logout">Logout</a>
       {% else %}
-        <a href="/about"    class="nav-link">About</a>
-        <a href="/pricing"  class="nav-link">Pricing</a>
-        <a href="/contact"  class="nav-link">Contact</a>
+        <a href="/about"         class="nav-link">About</a>
+        <a href="/pricing"       class="nav-link">Pricing</a>
+        <a href="/sample-report" class="nav-link">Sample Report</a>
+        <a href="/contact"       class="nav-link">Contact</a>
         <a href="/login"    class="nav-btn-outline">Login</a>
         <a href="/register" class="nav-btn-primary">Get Started</a>
       {% endif %}
@@ -387,7 +481,7 @@
   <!-- Flash messages -->
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div class="flash-wrap">
+      <div class="flash-wrap no-print">
         {% for category, message in messages %}
           <div class="flash-msg {% if category == 'error' %}error{% else %}success{% endif %}">
             {% if category == 'error' %}⚠️{% else %}✅{% endif %}
@@ -404,18 +498,19 @@
   </main>
 
   <!-- Footer -->
-  <footer class="base-footer">
+  <footer class="base-footer no-print">
     <div class="footer-inner">
       <div class="footer-brand">
         <a href="/" class="footer-logo"><span>Tender</span>AI</a>
         <p>AI-powered tender analysis for Indian SMEs and contractors. Bid smarter, win more.</p>
       </div>
       <div class="footer-links">
-        <a href="/about"   class="footer-link">About</a>
-        <a href="/pricing" class="footer-link">Pricing</a>
-        <a href="/contact" class="footer-link">Contact</a>
-        <a href="/login"   class="footer-link">Login</a>
-        <a href="/register" class="footer-link">Register</a>
+        <a href="/about"         class="footer-link">About</a>
+        <a href="/pricing"       class="footer-link">Pricing</a>
+        <a href="/sample-report" class="footer-link">Sample Report</a>
+        <a href="/contact"       class="footer-link">Contact</a>
+        <a href="/login"         class="footer-link">Login</a>
+        <a href="/register"      class="footer-link">Register</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -443,5 +538,5 @@
     });
   </script>
 
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0ae57f7cbc910b5',t:'MTc4MTMyNDg1NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

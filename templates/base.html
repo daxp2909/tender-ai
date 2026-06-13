@@ -7,8 +7,8 @@
   <meta name="description" content="{% block meta_description %}AI-powered tender analysis for Indian SMEs. Upload your tender and get a clear bid/no-bid recommendation.{% endblock %}">
   {% if is_staging %}<meta name="robots" content="noindex, nofollow">{% endif %}
 
-  <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+  <!-- Favicon (proper SVG) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231e6fe8'/%3E%3Ctext x='16' y='24' font-family='sans-serif' font-size='22' font-weight='bold' fill='white' text-anchor='middle'%3ET%3C/text%3E%3C/svg%3E">
 
   <!-- Google Analytics 4 -->
   {% if ga_id %}
@@ -359,6 +359,13 @@
 
 <body>
 
+  <!-- Skip to content (accessibility) -->
+  <a href="#main-content" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:9999;"
+     onfocus="this.style.position='static';this.style.width='auto';this.style.height='auto';this.style.padding='8px 16px';this.style.background='var(--blue)';this.style.color='white';this.style.fontSize='0.88rem';this.style.fontWeight='600';this.style.textDecoration='none';"
+     onblur="this.style.position='absolute';this.style.left='-9999px';this.style.width='1px';this.style.height='1px';">
+    Skip to content
+  </a>
+
   <!-- Navbar -->
   <nav class="base-nav no-print" id="baseNav">
     <div class="nav-inner">
@@ -431,7 +438,7 @@
     {% endif %}
   {% endwith %}
 
-    <main class="flex-1">
+    <main class="flex-1" id="main-content">
       {% block content %}{% endblock %}
     </main>
 
@@ -489,5 +496,5 @@
     });
   </script>
 
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0aeda52c92d1432',t:'MTc4MTMzMDE5NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>

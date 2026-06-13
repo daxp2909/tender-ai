@@ -1,111 +1,143 @@
 {% extends "base.html" %}
-{% block title %}Admin Leads — TenderAI{% endblock %}
+{% block title %}About — TenderAI{% endblock %}
+{% block meta_description %}Learn about TenderAI — AI-powered tender analysis for Indian SMEs. Built to level the playing field.{% endblock %}
 
 {% block content %}
-<div style="max-width:1000px;margin:0 auto;padding:32px 24px;">
+<div style="max-width:800px;margin:0 auto;padding:32px 24px;">
 
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+  <!-- Hero -->
+  <div style="text-align:center;margin-bottom:48px;">
+    <h1 style="font-family:'Sora',sans-serif;font-size:1.8rem;font-weight:800;margin:0 0 12px;">Helping India's SMEs <em style="color:var(--blue);font-style:normal;">Win More Tenders</em></h1>
+    <p style="color:var(--muted);font-size:0.95rem;max-width:600px;margin:0 auto;line-height:1.6;">Every day, crores worth of government contracts go to companies that simply knew what to bid on. TenderAI gives every small business that same edge — instantly, affordably, and accurately.</p>
+  </div>
+
+  <!-- Problem / Solution -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:48px;">
+    <div style="background:#fef2f2;border-radius:14px;padding:24px;border:1px solid #fecaca;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">⚠️</div>
+      <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 8px;">The Problem</h2>
+      <p style="font-size:0.88rem;line-height:1.6;margin:0;">Tender review is slow, complex, and expensive. Thousands of tenders are published daily across government portals. Most SMEs either miss them entirely or waste hours reading PDFs — only to find they weren't eligible.</p>
+    </div>
+    <div style="background:#f0fdf4;border-radius:14px;padding:24px;border:1px solid #bbf7d0;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">✅</div>
+      <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 8px;">The Solution</h2>
+      <p style="font-size:0.88rem;line-height:1.6;margin:0;">Upload the PDF or paste the text. In seconds, TenderAI tells you your eligibility score, red flags, required documents, and whether you should bid — backed by direct citations from the tender itself.</p>
+    </div>
+  </div>
+
+  <!-- Mission -->
+  <div style="background:var(--white);border-radius:14px;padding:28px 24px;border:1px solid var(--border);margin-bottom:48px;">
+    <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;margin:0 0 12px;">Our Mission</h2>
+    <p style="font-size:0.9rem;line-height:1.7;margin:0 0 12px;">India has millions of capable SMEs, contractors, and builders who deserve a fair shot at government contracts. But the tender process has always been tilted toward large firms with dedicated legal and procurement teams.</p>
+    <p style="font-size:0.9rem;line-height:1.7;margin:0 0 12px;"><strong>TenderAI levels the playing field.</strong> By automating the most time-consuming part of tendering — reading and evaluating documents — we give small businesses the same decision-making power as companies 10x their size. <strong>Compete smarter, not harder.</strong></p>
+  </div>
+
+  <!-- Trust Points -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:48px;">
+    <div style="background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);text-align:center;">
+      <div style="font-size:1.5rem;margin-bottom:6px;">📌</div>
+      <div style="font-size:0.85rem;font-weight:700;margin-bottom:4px;">Citation-Backed</div>
+      <div style="font-size:0.8rem;color:var(--muted);">Every finding links to the exact line in your document.</div>
+    </div>
+    <div style="background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);text-align:center;">
+      <div style="font-size:1.5rem;margin-bottom:6px;">⚡</div>
+      <div style="font-size:0.85rem;font-weight:700;margin-bottom:4px;">Results in Seconds</div>
+      <div style="font-size:0.8rem;color:var(--muted);">Full analysis in under 30 seconds.</div>
+    </div>
+    <div style="background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);text-align:center;">
+      <div style="font-size:1.5rem;margin-bottom:6px;">🇮🇳</div>
+      <div style="font-size:0.85rem;font-weight:700;margin-bottom:4px;">Built for India</div>
+      <div style="font-size:0.8rem;color:var(--muted);">Designed for Indian government tender formats.</div>
+    </div>
+  </div>
+
+  <!-- How It Works — FIXED numbering -->
+  <div style="background:var(--white);border-radius:14px;padding:28px 24px;border:1px solid var(--border);margin-bottom:48px;">
+    <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;margin:0 0 20px;">How TenderAI Works</h2>
+
+    <!-- Stage 1 -->
+    <div style="margin-bottom:20px;">
+      <div style="font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Stage 1 — Upload</div>
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <span style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:var(--blue);min-width:24px;">1</span>
+        <div>
+          <div style="font-size:0.9rem;font-weight:600;">Upload your tender PDF or paste the text</div>
+          <div style="font-size:0.82rem;color:var(--muted);">Supports all standard formats from GeM, CPPP, and state e-procurement portals. You can also paste tender text directly.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage 2 -->
+    <div style="margin-bottom:20px;">
+      <div style="font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Stage 2 — Analyse</div>
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;">
+        <span style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:var(--blue);min-width:24px;">2</span>
+        <div>
+          <div style="font-size:0.9rem;font-weight:600;">Answer a few quick questions</div>
+          <div style="font-size:0.82rem;color:var(--muted);">TenderAI asks about your company to personalise the eligibility check.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;">
+        <span style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:var(--blue);min-width:24px;">3</span>
+        <div>
+          <div style="font-size:0.9rem;font-weight:600;">AI reads the entire document</div>
+          <div style="font-size:0.82rem;color:var(--muted);">Every clause, condition, and eligibility criterion — extracted in seconds.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <span style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:var(--blue);min-width:24px;">4</span>
+        <div>
+          <div style="font-size:0.9rem;font-weight:600;">Citations verified against source</div>
+          <div style="font-size:0.82rem;color:var(--muted);">Every result is cross-checked against the original document. No hallucinations, no guesswork.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage 3 -->
     <div>
-      <h1 style="font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:700;margin:0;">Lead Management</h1>
-      <p style="color:var(--muted);font-size:0.9rem;margin-top:4px;">Track and manage expert review leads.</p>
+      <div style="font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Stage 3 — Decide & Act</div>
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;">
+        <span style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:var(--blue);min-width:24px;">5</span>
+        <div>
+          <div style="font-size:0.9rem;font-weight:600;">Get your Eligibility Score & Bid Recommendation</div>
+          <div style="font-size:0.82rem;color:var(--muted);">A clear score out of 100 and a direct Bid / Don't Bid / Bid with Caution recommendation.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;">
+        <span style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:var(--blue);min-width:24px;">6</span>
+        <div>
+          <div style="font-size:0.9rem;font-weight:600;">Review your document checklist & action plan</div>
+          <div style="font-size:0.82rem;color:var(--muted);">Every document you need, every risk flagged, and a step-by-step action plan.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <span style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:var(--blue);min-width:24px;">7</span>
+        <div>
+          <div style="font-size:0.9rem;font-weight:600;">Save to history & compare</div>
+          <div style="font-size:0.82rem;color:var(--muted);">All analyses stored in your dashboard. Compare tenders and build a smarter bidding strategy.</div>
+        </div>
+      </div>
     </div>
-    <div style="display:flex;gap:8px;">
-      <a href="/admin" style="padding:8px 16px;border-radius:8px;font-size:0.82rem;font-weight:500;
-         background:white;color:var(--muted);border:1px solid var(--border);text-decoration:none;">← Back to Admin</a>
-    </div>
   </div>
 
-  <!-- Filters -->
-  <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
-    <a href="/admin/leads" style="padding:6px 14px;border-radius:6px;font-size:0.82rem;font-weight:500;text-decoration:none;
-       {% if not current_filter %}background:var(--blue);color:white;{% else %}background:white;color:var(--muted);border:1px solid var(--border);{% endif %}">
-      All
+  <!-- Founder -->
+  <div style="background:var(--white);border-radius:14px;padding:28px 24px;border:1px solid var(--border);margin-bottom:48px;">
+    <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;margin:0 0 12px;">👨‍💻 Solo Founder</h2>
+    <p style="font-size:0.9rem;line-height:1.7;margin:0 0 16px;">TenderAI is an independent product built by a single developer who saw how much time Indian businesses waste on tender paperwork — and decided to fix it with AI. Every feature is designed around one goal: helping you win more, faster.</p>
+    <blockquote style="border-left:3px solid var(--blue);padding-left:16px;margin:0;font-style:italic;color:var(--muted);font-size:0.88rem;">
+      "I built TenderAI because I believe every small business in India deserves the same shot at a government contract as the big players."
+    </blockquote>
+  </div>
+
+  <!-- CTA -->
+  <div style="text-align:center;padding:32px;background:linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%);border-radius:14px;border:1px solid #93c5fd;">
+    <h2 style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:700;margin:0 0 8px;">Your next winning tender is one upload away.</h2>
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:16px;">Join businesses across India bidding smarter with TenderAI. Get your first analysis free — no credit card needed.</p>
+    <a href="/register" style="display:inline-block;padding:12px 28px;border-radius:9px;font-size:0.9rem;font-weight:700;
+       background:var(--blue);color:white;text-decoration:none;box-shadow:0 2px 10px rgba(30,111,232,0.25);">
+      Start Analysing Free
     </a>
-    {% for status in ['new', 'expert_review_requested', 'call_booked', 'contacted', 'paid_review', 'bid_support', 'closed', 'not_interested'] %}
-    <a href="/admin/leads?status={{ status }}" style="padding:6px 14px;border-radius:6px;font-size:0.82rem;font-weight:500;text-decoration:none;
-       {% if current_filter == status %}background:var(--blue);color:white;{% else %}background:white;color:var(--muted);border:1px solid var(--border);{% endif %}">
-      {{ status.replace('_', ' ').title() }}
-    </a>
-    {% endfor %}
   </div>
 
-  {% if not leads %}
-  <div style="text-align:center;padding:48px 24px;background:var(--white);border-radius:14px;border:1px solid var(--border);color:var(--muted);">
-    No leads found.
-  </div>
-  {% else %}
-
-  <div style="overflow-x:auto;">
-    <table style="width:100%;border-collapse:collapse;background:var(--white);border-radius:14px;overflow:hidden;border:1px solid var(--border);">
-      <thead>
-        <tr style="background:var(--surface);text-align:left;font-size:0.8rem;font-weight:600;color:var(--muted);">
-          <th style="padding:12px 12px;">Company</th>
-          <th style="padding:12px 12px;">Contact</th>
-          <th style="padding:12px 12px;">Tender</th>
-          <th style="padding:12px 12px;">Fit</th>
-          <th style="padding:12px 12px;">Rec.</th>
-          <th style="padding:12px 12px;">Status</th>
-          <th style="padding:12px 12px;">Notes</th>
-          <th style="padding:12px 12px;">Date</th>
-          <th style="padding:12px 12px;">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for lead in leads %}
-        {% set created = lead.created_at|string %}
-        <tr style="border-top:1px solid var(--border);font-size:0.82rem;vertical-align:top;">
-          <td style="padding:10px 12px;font-weight:500;">{{ lead.company_name or '—' }}</td>
-          <td style="padding:10px 12px;">
-            {% if lead.contact_name %}{{ lead.contact_name }}<br>{% endif %}
-            {% if lead.email %}<span style="color:var(--blue);">{{ lead.email }}</span><br>{% endif %}
-            {% if lead.phone %}{{ lead.phone }}{% endif %}
-          </td>
-          <td style="padding:10px 12px;">
-            {{ (lead.tender_title or '—')[:35] }}
-            {% if lead.tender_deadline %}<br><span style="color:var(--muted);font-size:0.75rem;">📅 {{ lead.tender_deadline }}</span>{% endif %}
-          </td>
-          <td style="padding:10px 12px;font-weight:600;">{{ lead.fit_score or '—' }}</td>
-          <td style="padding:10px 12px;font-size:0.78rem;">{{ lead.recommendation or '—' }}</td>
-          <td style="padding:10px 12px;">
-            <span style="padding:3px 8px;border-radius:5px;font-size:0.72rem;font-weight:600;
-              {% if lead.status == 'new' %}background:#dbeafe;color:#1e40af;
-              {% elif lead.status == 'expert_review_requested' %}background:#fef9c3;color:#854d0e;
-              {% elif lead.status == 'call_booked' %}background:#dcfce7;color:#166534;
-              {% elif lead.status == 'paid_review' %}background:#ede9fe;color:#6d28d9;
-              {% elif lead.status == 'bid_support' %}background:#dbeafe;color:#1e40af;
-              {% elif lead.status == 'closed' %}background:#f3f4f6;color:#4b5563;
-              {% elif lead.status == 'not_interested' %}background:#fecaca;color:#991b1b;
-              {% else %}background:#f3f4f6;color:#4b5563;{% endif %}">
-              {{ lead.status.replace('_', ' ').title() }}
-            </span>
-          </td>
-          <td style="padding:10px 12px;max-width:150px;overflow:hidden;text-overflow:ellipsis;font-size:0.78rem;color:var(--muted);">
-            {{ lead.notes or '—' }}
-          </td>
-          <td style="padding:10px 12px;font-size:0.78rem;color:var(--muted);">{{ created[:10] }}</td>
-          <td style="padding:10px 12px;">
-            <form method="POST" action="/admin/leads/{{ lead.id }}/update" style="display:flex;flex-direction:column;gap:4px;">
-              <select name="status" style="font-size:0.75rem;padding:4px 6px;border:1px solid var(--border);border-radius:4px;">
-                {% for s in ['new', 'contacted', 'call_booked', 'expert_review_requested', 'paid_review', 'bid_support', 'closed', 'not_interested'] %}
-                <option value="{{ s }}" {% if lead.status == s %}selected{% endif %}>{{ s.replace('_', ' ').title() }}</option>
-                {% endfor %}
-              </select>
-              <input name="notes" value="{{ lead.notes or '' }}" placeholder="Notes"
-                style="font-size:0.75rem;padding:4px 6px;border:1px solid var(--border);border-radius:4px;">
-              <button type="submit" style="font-size:0.72rem;padding:4px 8px;background:var(--blue);color:white;border:none;border-radius:4px;cursor:pointer;">
-                Update
-              </button>
-            </form>
-            {% if lead.analysis_id %}
-            <a href="/report/{{ lead.analysis_id }}" target="_blank" style="font-size:0.72rem;color:var(--blue);margin-top:4px;display:inline-block;">View Report</a>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  {% endif %}
 </div>
 {% endblock %}

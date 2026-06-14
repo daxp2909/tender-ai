@@ -20,8 +20,21 @@
     {% set sub_domains_val = '' %}
   {% endif %}
 
-  <form method="POST" action="/profile">
+  <form method="POST" action="/profile{% if next_url %}?next={{ next_url }}{% endif %}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if next_url %}
+    <input type="hidden" name="next" value="{{ next_url }}">
+    {% endif %}
+
+    {% if next_url %}
+    <!-- Banner: user was redirected here from another page -->
+    <div style="background:#eff6ff;border-radius:14px;padding:16px 20px;border:1px solid #93c5fd;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1.2rem;">💡</span>
+        <p style="font-size:0.88rem;color:#1e40af;margin:0;">Complete your profile to continue. You'll be redirected back automatically.</p>
+      </div>
+    </div>
+    {% endif %}
 
     <!-- Basic Info -->
     <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);margin-bottom:20px;">

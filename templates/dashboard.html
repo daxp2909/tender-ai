@@ -34,7 +34,7 @@
   </div>
 
   <!-- Profile Completion CTA -->
-  {% if not profile or not profile.domain %}
+  {% if not profile or not profile.get("domain") %}
   <div style="background:linear-gradient(135deg,#fef9c3 0%,#fef3c7 100%);border-radius:14px;padding:20px 24px;
        border:1px solid #fde68a;margin-bottom:20px;">
     <div style="display:flex;align-items:center;gap:12px;">
@@ -43,7 +43,7 @@
         <h3 style="font-family:'Sora',sans-serif;font-size:0.95rem;font-weight:700;margin:0;">Complete your company profile</h3>
         <p style="font-size:0.85rem;color:#854d0e;margin-top:4px;">Profile is required for accurate tender analysis.</p>
       </div>
-      <a href="/profile" style="margin-left:auto;padding:8px 16px;border-radius:8px;font-size:0.82rem;font-weight:600;
+      <a href="/profile?next=/analyze" style="margin-left:auto;padding:8px 16px;border-radius:8px;font-size:0.82rem;font-weight:600;
          background:#ca8a04;color:white;text-decoration:none;white-space:nowrap;">Update Profile</a>
     </div>
   </div>

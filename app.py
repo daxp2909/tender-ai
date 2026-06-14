@@ -438,11 +438,16 @@ def profile():
         result = save_company_profile(user_id, profile_data)
         if result["success"]:
             flash("Profile updated successfully!", "success")
+            # Redirect to ?next= page if provided (e.g. /analyze)
+            next_url = request.args.get("next") or request.form.get("next")
+            if next_url and next_url.startswith("/"):
+                return redirect(next_url)
         else:
             flash("Error updating profile. Please try again.", "error")
 
     company = get_company_profile(user_id)
-    return render_template("profile.html", profile=company)
+    next_url = request.args.get("next", "")
+    return render_template("profile.html", profile=company, next_url=next_url)
 
 
 # ================================================================
@@ -458,9 +463,12 @@ def analyze():
     user_id = session["user_id"]
     profile = get_company_profile(user_id)
 
-    if not profile or not profile.domain:
-        flash("Please complete your company profile before analysis.", "error")
-        return redirect(url_for("profile"))
+    # Profile must exist and have a domain set — otherwise analysis has
+    # no company context.  Use .get() because Supabase returns dicts,
+    # not objects (profile.domain would AttributeError).
+    if not profile or not profile.get("domain"):
+        flash("Please complete your company profile before running an analysis. We need your industry domain at minimum.", "info")
+        return redirect(url_for("profile", next="/analyze"))
 
     # ── Step 1: Upload/Paste tender ──────────────────────────
     if request.method == "POST" and request.form.get("step") == "upload":

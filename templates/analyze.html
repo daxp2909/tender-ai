@@ -12,7 +12,7 @@
      ================================================================ #}
   {% if not show_questions and not result %}
 
-  {% if not profile or not profile.domain %}
+  {% if not profile or not profile.get("domain") %}
   <div style="background:#fef9c3;border-radius:14px;padding:20px 24px;border:1px solid #fde68a;margin-bottom:20px;">
     <div style="display:flex;align-items:center;gap:12px;">
       <span style="font-size:1.3rem;">⚠️</span>
@@ -20,13 +20,14 @@
         <p style="font-size:0.9rem;font-weight:600;margin:0;">Complete your company profile first</p>
         <p style="font-size:0.82rem;color:#854d0e;margin-top:2px;">We need your company details to analyze tender fit.</p>
       </div>
-      <a href="/profile" style="margin-left:auto;padding:8px 16px;border-radius:8px;font-size:0.82rem;font-weight:600;
+      <a href="/profile?next=/analyze" style="margin-left:auto;padding:8px 16px;border-radius:8px;font-size:0.82rem;font-weight:600;
          background:#ca8a04;color:white;text-decoration:none;white-space:nowrap;">Update Profile</a>
     </div>
   </div>
   {% endif %}
 
   <form method="POST" action="/analyze" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="step" value="upload">
 
     <!-- ── Tender Metadata ──────────────────────── -->
@@ -77,7 +78,6 @@
       <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 6px;">📄 Tender Document</h2>
       <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Provide either a PDF upload OR paste the tender text below.</p>
 
-      <!-- Tab switcher -->
       <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--border);">
         <button type="button" id="tabPdf" onclick="switchTab('pdf')"
           style="padding:8px 16px;font-size:0.88rem;font-weight:600;border:none;cursor:pointer;
@@ -91,14 +91,12 @@
         </button>
       </div>
 
-      <!-- PDF upload -->
       <div id="sectionPdf">
         <input type="file" name="pdf_file" accept=".pdf"
           style="width:100%;padding:20px;border:2px dashed var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:8px;">
         <p style="font-size:0.78rem;color:var(--muted);">PDF only, max 10 MB. If extraction fails, you can paste text instead.</p>
       </div>
 
-      <!-- Paste text -->
       <div id="sectionPaste" style="display:none;">
         <textarea name="pasted_tender_text" rows="12" placeholder="Paste the tender text here... Include eligibility criteria, financial requirements, documents needed, important dates, and scope of work."
           style="width:100%;padding:14px;border:1px solid var(--border);border-radius:10px;font-size:0.88rem;resize:vertical;font-family:'DM Sans',sans-serif;"></textarea>
@@ -209,6 +207,7 @@
   {% if show_questions %}
 
   <form method="POST" action="/analyze">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="step" value="answers">
 
     <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);margin-bottom:20px;">
@@ -275,32 +274,36 @@
 
   {# ================================================================
      STEP 3: Analysis Result
+     Uses CSS classes from base.html instead of Jinja2 in style=""
      ================================================================ #}
   {% if result %}
 
-  <!-- Executive Summary -->
   {% set exec = result.executive_summary or {} %}
   {% set scores = result.scores or {} %}
   {% set bid = result.bid_decision or {} %}
   {% set mand = result.mandatory_eligibility or {} %}
 
+  {# Compute CSS class names once #}
+  {% set dec = bid.decision or '' %}
+  {% set dec_class = 'decision-donot' if 'Do Not' in dec else ('decision-caution' if 'Caution' in dec else ('decision-partner' if 'Partner' in dec else ('decision-bid' if 'Bid' in dec else 'decision-other'))) %}
+  {% set dec_text_class = 'decision-text-donot' if 'Do Not' in dec else ('decision-text-caution' if 'Caution' in dec else ('decision-text-partner' if 'Partner' in dec else ('decision-text-bid' if 'Bid' in dec else 'decision-text-other'))) %}
+  {% set elig_val = scores.eligibility_score or 0 %}
+  {% set fit_val = scores.company_fit_score or 0 %}
+  {% set risk_val = scores.risk_score or 0 %}
+  {% set doc_val = scores.document_readiness_score or 0 %}
+  {% set elig_score_class = 'score-big-high' if elig_val >= 70 else ('score-big-mid' if elig_val >= 40 else 'score-big-low') %}
+  {% set fit_score_class = 'score-big-high' if fit_val >= 70 else ('score-big-mid' if fit_val >= 40 else 'score-big-low') %}
+  {% set risk_score_class = 'score-big-high' if risk_val <= 30 else ('score-big-mid' if risk_val <= 60 else 'score-big-low') %}
+  {% set doc_score_class = 'score-big-high' if doc_val >= 70 else ('score-big-mid' if doc_val >= 40 else 'score-big-low') %}
+  {% set mand_status_class = 'elig-status-pass' if mand.status == 'Pass' else ('elig-status-partial' if mand.status == 'Partial' else ('elig-status-fail' if mand.status == 'Fail' else 'elig-status-verify')) %}
+
   <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);margin-bottom:20px;">
     <h2 style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:700;margin:0 0 16px;">🎯 Analysis Complete</h2>
 
     <!-- Recommendation -->
-    <div style="text-align:center;padding:20px;border-radius:12px;margin-bottom:20px;
-      {% if 'Do Not' in bid.decision %}background:#fef2f2;border:2px solid #fca5a5;
-      {% elif 'Caution' in bid.decision %}background:#fefce8;border:2px solid #fde68a;
-      {% elif 'Partner' in bid.decision %}background:#eff6ff;border:2px solid #93c5fd;
-      {% elif 'Bid' in bid.decision %}background:#f0fdf4;border:2px solid #bbf7d0;
-      {% else %}background:#f9fafb;border:2px solid #d1d5db;{% endif %}">
+    <div class="{{ dec_class }}" style="text-align:center;padding:20px;border-radius:12px;margin-bottom:20px;">
       <div style="font-size:0.82rem;color:var(--muted);margin-bottom:4px;">Recommendation</div>
-      <div style="font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:800;
-        {% if 'Do Not' in bid.decision %}color:#991b1b;
-        {% elif 'Caution' in bid.decision %}color:#854d0e;
-        {% elif 'Partner' in bid.decision %}color:#1e40af;
-        {% elif 'Bid' in bid.decision %}color:#166534;
-        {% else %}color:#4b5563;{% endif %}">
+      <div class="{{ dec_text_class }}" style="font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:800;">
         {{ bid.decision or 'Need More Information' }}
       </div>
       {% if bid.reason %}
@@ -312,39 +315,19 @@
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px;">
       <div style="text-align:center;padding:14px;border-radius:10px;background:var(--surface);">
         <div style="font-size:0.75rem;color:var(--muted);margin-bottom:2px;">Eligibility</div>
-        <div style="font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:800;
-          {% if (scores.eligibility_score or 0) >= 70 %}color:#166534;
-          {% elif (scores.eligibility_score or 0) >= 40 %}color:#854d0e;
-          {% else %}color:#991b1b;{% endif %}">
-          {{ scores.eligibility_score or 0 }}%
-        </div>
+        <div class="score-big {{ elig_score_class }}">{{ elig_val }}%</div>
       </div>
       <div style="text-align:center;padding:14px;border-radius:10px;background:var(--surface);">
         <div style="font-size:0.75rem;color:var(--muted);margin-bottom:2px;">Company Fit</div>
-        <div style="font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:800;
-          {% if (scores.company_fit_score or 0) >= 70 %}color:#166534;
-          {% elif (scores.company_fit_score or 0) >= 40 %}color:#854d0e;
-          {% else %}color:#991b1b;{% endif %}">
-          {{ scores.company_fit_score or 0 }}%
-        </div>
+        <div class="score-big {{ fit_score_class }}">{{ fit_val }}%</div>
       </div>
       <div style="text-align:center;padding:14px;border-radius:10px;background:var(--surface);">
         <div style="font-size:0.75rem;color:var(--muted);margin-bottom:2px;">Risk Level</div>
-        <div style="font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:800;
-          {% if (scores.risk_score or 0) <= 30 %}color:#166534;
-          {% elif (scores.risk_score or 0) <= 60 %}color:#854d0e;
-          {% else %}color:#991b1b;{% endif %}">
-          {{ scores.risk_score or 0 }}%
-        </div>
+        <div class="score-big {{ risk_score_class }}">{{ risk_val }}%</div>
       </div>
       <div style="text-align:center;padding:14px;border-radius:10px;background:var(--surface);">
         <div style="font-size:0.75rem;color:var(--muted);margin-bottom:2px;">Doc Readiness</div>
-        <div style="font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:800;
-          {% if (scores.document_readiness_score or 0) >= 70 %}color:#166534;
-          {% elif (scores.document_readiness_score or 0) >= 40 %}color:#854d0e;
-          {% else %}color:#991b1b;{% endif %}">
-          {{ scores.document_readiness_score or 0 }}%
-        </div>
+        <div class="score-big {{ doc_score_class }}">{{ doc_val }}%</div>
       </div>
     </div>
 
@@ -372,13 +355,7 @@
   <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);margin-bottom:20px;">
     <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">✅ Mandatory Eligibility</h2>
     <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-      <span style="padding:6px 14px;border-radius:8px;font-size:0.85rem;font-weight:700;
-        {% if mand.status == 'Pass' %}background:#dcfce7;color:#166534;border:1px solid #bbf7d0;
-        {% elif mand.status == 'Partial' %}background:#fef9c3;color:#854d0e;border:1px solid #fde68a;
-        {% elif mand.status == 'Fail' %}background:#fecaca;color:#991b1b;border:1px solid #fca5a5;
-        {% else %}background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;{% endif %}">
-        {{ mand.status }}
-      </span>
+      <span class="rec-badge {{ mand_status_class }}">{{ mand.status }}</span>
     </div>
     {% if mand.failed_criteria %}
     <div style="margin-bottom:8px;">
@@ -413,19 +390,14 @@
         </thead>
         <tbody>
           {% for item in result.eligibility_match %}
+          {% set item_class = 'score-high' if item.status == 'PASS' else ('score-low' if item.status == 'FAIL' else ('score-mid' if item.status == 'PARTIAL' else 'doc-verify')) %}
           <tr style="border-top:1px solid var(--border);">
             <td style="padding:8px 10px;font-weight:500;">{{ item.criterion }}</td>
             <td style="padding:8px 10px;">{% if item.mandatory %}✅ Yes{% else %}Optional{% endif %}</td>
             <td style="padding:8px 10px;">{{ item.required }}</td>
             <td style="padding:8px 10px;">{{ item.company_has }}</td>
             <td style="padding:8px 10px;">
-              <span style="padding:3px 8px;border-radius:5px;font-size:0.75rem;font-weight:600;
-                {% if item.status == 'PASS' %}background:#dcfce7;color:#166534;
-                {% elif item.status == 'FAIL' %}background:#fecaca;color:#991b1b;
-                {% elif item.status == 'PARTIAL' %}background:#fef9c3;color:#854d0e;
-                {% else %}background:#dbeafe;color:#1e40af;{% endif %}">
-                {{ item.status }}
-              </span>
+              <span class="status-badge {{ item_class }}">{{ item.status }}</span>
             </td>
             <td style="padding:8px 10px;font-size:0.75rem;color:var(--muted);">
               {% if item.citation and item.citation.found %}
@@ -449,18 +421,12 @@
   <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);margin-bottom:20px;">
     <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">⚠️ Risk Analysis</h2>
     {% for risk in result.risk_analysis %}
-    <div style="padding:12px;border-radius:10px;margin-bottom:8px;border:1px solid var(--border);
-      {% if risk.risk_level == 'High' %}background:#fef2f2;
-      {% elif risk.risk_level == 'Medium' %}background:#fefce8;
-      {% else %}background:#f0fdf4;{% endif %}">
+    {% set risk_card_class = 'risk-card-high' if risk.risk_level == 'High' else ('risk-card-mid' if risk.risk_level == 'Medium' else 'risk-card-low') %}
+    {% set risk_badge_class = 'risk-high' if risk.risk_level == 'High' else ('risk-mid' if risk.risk_level == 'Medium' else 'risk-low') %}
+    <div class="{{ risk_card_class }}" style="padding:12px;border-radius:10px;margin-bottom:8px;border:1px solid var(--border);">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
         <span style="font-weight:600;font-size:0.9rem;">{{ risk.risk }}</span>
-        <span style="padding:3px 8px;border-radius:5px;font-size:0.72rem;font-weight:600;
-          {% if risk.risk_level == 'High' %}background:#fecaca;color:#991b1b;
-          {% elif risk.risk_level == 'Medium' %}background:#fef9c3;color:#854d0e;
-          {% else %}background:#dcfce7;color:#166534;{% endif %}">
-          {{ risk.risk_level }}
-        </span>
+        <span class="risk-badge {{ risk_badge_class }}">{{ risk.risk_level }}</span>
       </div>
       <div style="font-size:0.82rem;color:var(--muted);margin-bottom:4px;">{{ risk.reason }}</div>
       {% if risk.mitigation %}
@@ -488,25 +454,17 @@
         </thead>
         <tbody>
           {% for doc in result.document_readiness %}
+          {% set doc_status_class = 'doc-ready' if doc.status == 'Ready' else ('doc-missing' if doc.status == 'Missing' else 'doc-verify') %}
+          {% set doc_prio_class = 'priority-high' if doc.priority == 'High' else ('priority-medium' if doc.priority == 'Medium' else 'priority-low') %}
           <tr style="border-top:1px solid var(--border);">
             <td style="padding:8px 10px;font-weight:500;">{{ doc.document }}</td>
             <td style="padding:8px 10px;">{% if doc.required %}✅{% else %}Optional{% endif %}</td>
             <td style="padding:8px 10px;">{{ doc.company_has or 'Unknown' }}</td>
             <td style="padding:8px 10px;">
-              <span style="padding:3px 8px;border-radius:5px;font-size:0.75rem;font-weight:600;
-                {% if doc.status == 'Ready' %}background:#dcfce7;color:#166534;
-                {% elif doc.status == 'Missing' %}background:#fecaca;color:#991b1b;
-                {% else %}background:#dbeafe;color:#1e40af;{% endif %}">
-                {{ doc.status }}
-              </span>
+              <span class="status-badge {{ doc_status_class }}">{{ doc.status }}</span>
             </td>
             <td style="padding:8px 10px;">
-              <span style="padding:3px 8px;border-radius:5px;font-size:0.75rem;font-weight:600;
-                {% if doc.priority == 'High' %}background:#fecaca;color:#991b1b;
-                {% elif doc.priority == 'Medium' %}background:#fef9c3;color:#854d0e;
-                {% else %}background:#dcfce7;color:#166534;{% endif %}">
-                {{ doc.priority }}
-              </span>
+              <span class="priority-badge {{ doc_prio_class }}">{{ doc.priority }}</span>
             </td>
           </tr>
           {% endfor %}
@@ -581,13 +539,9 @@
   <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);margin-bottom:20px;">
     <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0 0 12px;">🗓️ Action Plan</h2>
     {% for action in result.action_plan %}
+    {% set prio_class = 'priority-high' if action.priority == 'High' else ('priority-medium' if action.priority == 'Medium' else 'priority-low') %}
     <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);">
-      <span style="padding:3px 8px;border-radius:5px;font-size:0.72rem;font-weight:600;white-space:nowrap;
-        {% if action.priority == 'High' %}background:#fecaca;color:#991b1b;
-        {% elif action.priority == 'Medium' %}background:#fef9c3;color:#854d0e;
-        {% else %}background:#dcfce7;color:#166534;{% endif %}">
-        {{ action.priority }}
-      </span>
+      <span class="priority-badge {{ prio_class }}">{{ action.priority }}</span>
       <div style="flex:1;">
         <div style="font-size:0.88rem;font-weight:500;">{{ action.action }}</div>
         {% if action.timeline %}
@@ -639,7 +593,7 @@
     <a href="/analyze"
       style="padding:12px 20px;border-radius:9px;font-size:0.88rem;font-weight:600;
              background:white;color:var(--muted);border:1px solid var(--border);text-decoration:none;">
-      + Analyze Another
+      + Analyse Another
     </a>
   </div>
 

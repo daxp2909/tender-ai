@@ -12,9 +12,9 @@
     </h1>
     <p style="color:rgba(255,255,255,0.6);font-size:1.05rem;line-height:1.6;margin-bottom:32px;">Upload any government or private tender and instantly know your eligibility score, risk level, and whether you should bid — backed by direct citations.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <a href="/register" style="font-family:'Sora',sans-serif;font-size:0.92rem;font-weight:700;color:var(--navy);
+      <a href="{% if session.get('user_id') %}/analyze{% else %}/register{% endif %}" style="font-family:'Sora',sans-serif;font-size:0.92rem;font-weight:700;color:var(--navy);
          background:#3b8bff;padding:14px 28px;border-radius:10px;text-decoration:none;
-         box-shadow:0 4px 20px rgba(30,111,232,0.4);">Start for Free</a>
+         box-shadow:0 4px 20px rgba(30,111,232,0.4);">{% if session.get('user_id') %}Analyse a Tender{% else %}Start for Free{% endif %}</a>
       <a href="/about" style="font-family:'Sora',sans-serif;font-size:0.92rem;font-weight:600;color:rgba(255,255,255,0.8);
          padding:14px 28px;border-radius:10px;text-decoration:none;border:1px solid rgba(255,255,255,0.15);">Learn More</a>
     </div>
@@ -170,9 +170,9 @@
     <h2 style="font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:800;color:white;margin:0 0 8px;">Ready to win <em style="font-style:normal;color:#3b8bff;">more tenders?</em></h2>
     <p style="color:rgba(255,255,255,0.6);font-size:0.92rem;margin-bottom:24px;">Join companies already using TenderAI to make smarter, faster bidding decisions. Your first analysis is free.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <a href="/register" style="font-family:'Sora',sans-serif;font-size:0.92rem;font-weight:700;color:var(--navy);
+      <a href="{% if session.get('user_id') %}/analyze{% else %}/register{% endif %}" style="font-family:'Sora',sans-serif;font-size:0.92rem;font-weight:700;color:var(--navy);
          background:#3b8bff;padding:14px 28px;border-radius:10px;text-decoration:none;
-         box-shadow:0 4px 20px rgba(30,111,232,0.4);">Create Free Account</a>
+         box-shadow:0 4px 20px rgba(30,111,232,0.4);">{% if session.get('user_id') %}Analyse a Tender{% else %}Create Free Account{% endif %}</a>
       <a href="/sample-report" style="font-family:'Sora',sans-serif;font-size:0.92rem;font-weight:600;color:rgba(255,255,255,0.8);
          padding:14px 28px;border-radius:10px;text-decoration:none;border:1px solid rgba(255,255,255,0.15);">See Sample Report</a>
     </div>

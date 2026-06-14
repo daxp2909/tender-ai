@@ -340,6 +340,79 @@
       .footer-links { justify-content: flex-start; }
     }
 
+    /* ── SHARED COMPONENT CLASSES ── */
+
+    /* Score badges (eligibility, fit, risk, doc readiness) */
+    .score-badge { padding:4px 10px; border-radius:6px; font-size:0.78rem; font-weight:600; }
+    .score-high  { background:#dcfce7; color:#166534; }
+    .score-mid   { background:#fef9c3; color:#854d0e; }
+    .score-low   { background:#fecaca; color:#991b1b; }
+
+    /* Big score numbers (report page) */
+    .score-big { font-family:'Sora',sans-serif; font-size:2rem; font-weight:800; text-align:center; }
+    .score-big-high { color:#166534; }
+    .score-big-mid  { color:#854d0e; }
+    .score-big-low  { color:#991b1b; }
+
+    /* Recommendation badges */
+    .rec-badge   { padding:6px 14px; border-radius:8px; font-size:0.82rem; font-weight:700; }
+    .rec-bid     { background:#dcfce7; color:#166534; border:1px solid #bbf7d0; }
+    .rec-caution { background:#fef9c3; color:#854d0e; border:1px solid #fde68a; }
+    .rec-partner { background:#dbeafe; color:#1e40af; border:1px solid #93c5fd; }
+    .rec-donot   { background:#fecaca; color:#991b1b; border:1px solid #fca5a5; }
+    .rec-other   { background:#f3f4f6; color:#4b5563; border:1px solid #d1d5db; }
+
+    /* Decision card backgrounds (big banner) */
+    .decision-bid     { background:#f0fdf4; border:2px solid #bbf7d0; }
+    .decision-caution { background:#fefce8; border:2px solid #fde68a; }
+    .decision-partner { background:#eff6ff; border:2px solid #93c5fd; }
+    .decision-donot   { background:#fef2f2; border:2px solid #fca5a5; }
+    .decision-other   { background:#f9fafb; border:2px solid #d1d5db; }
+
+    .decision-text-bid     { color:#166534; }
+    .decision-text-caution { color:#854d0e; }
+    .decision-text-partner { color:#1e40af; }
+    .decision-text-donot   { color:#991b1b; }
+    .decision-text-other   { color:#4b5563; }
+
+    /* Risk badges */
+    .risk-badge { padding:3px 8px; border-radius:5px; font-size:0.72rem; font-weight:600; }
+    .risk-high  { background:#fecaca; color:#991b1b; }
+    .risk-mid   { background:#fef9c3; color:#854d0e; }
+    .risk-low   { background:#dcfce7; color:#166534; }
+
+    /* Risk card backgrounds */
+    .risk-card-high  { background:#fef2f2; }
+    .risk-card-mid   { background:#fefce8; }
+    .risk-card-low   { background:#f0fdf4; }
+
+    /* Priority badges */
+    .priority-badge { padding:3px 8px; border-radius:5px; font-size:0.72rem; font-weight:600; white-space:nowrap; }
+    .priority-high   { background:#fecaca; color:#991b1b; }
+    .priority-medium { background:#fef9c3; color:#854d0e; }
+    .priority-low    { background:#dcfce7; color:#166534; }
+
+    /* Status badges (admin) */
+    .status-badge { padding:3px 8px; border-radius:5px; font-size:0.75rem; font-weight:600; }
+    .status-new       { background:#dbeafe; color:#1e40af; }
+    .status-contacted { background:#fef9c3; color:#854d0e; }
+    .status-booked    { background:#dcfce7; color:#166534; }
+    .status-review    { background:#eff6ff; color:#1e40af; }
+    .status-paid      { background:#dcfce7; color:#166534; }
+    .status-closed    { background:#f3f4f6; color:#4b5563; }
+    .status-lost      { background:#fecaca; color:#991b1b; }
+
+    /* Eligibility status badge */
+    .elig-status-pass      { background:#dcfce7; color:#166534; border:1px solid #bbf7d0; }
+    .elig-status-partial   { background:#fef9c3; color:#854d0e; border:1px solid #fde68a; }
+    .elig-status-fail      { background:#fecaca; color:#991b1b; border:1px solid #fca5a5; }
+    .elig-status-verify    { background:#dbeafe; color:#1e40af; border:1px solid #93c5fd; }
+
+    /* Document readiness status */
+    .doc-ready   { background:#dcfce7; color:#166534; }
+    .doc-missing { background:#fecaca; color:#991b1b; }
+    .doc-verify  { background:#dbeafe; color:#1e40af; }
+
     /* ── PRINT STYLES ── */
     @media print {
       .base-nav, .base-footer, .nav-hamburger, .nav-mobile,
@@ -384,6 +457,7 @@
           <a href="/admin" class="nav-link" style="color:var(--orange);">Admin</a>
           {% endif %}
           <form method="POST" action="/logout" style="display:inline;margin:0;padding:0;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="nav-btn-logout">Logout</button>
           </form>
         {% else %}
@@ -411,6 +485,7 @@
         <a href="/admin" class="nav-link">Admin</a>
         {% endif %}
         <form method="POST" action="/logout" style="margin:0;padding:0;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit" class="nav-btn-logout" style="width:100%;">Logout</button>
         </form>
       {% else %}

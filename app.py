@@ -34,7 +34,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from auth import register_user, login_user, verify_reset_token, create_reset_token
+from auth import register_user, login_user, create_reset_token
 from db import (
     get_company_profile, save_company_profile, save_tender,
     save_analysis, get_analysis, get_analysis_history,
@@ -118,6 +118,8 @@ def logged_in():
 
 def require_login():
     if not logged_in():
+        # Save the page the user was trying to access
+        session["next_url"] = request.url
         flash("Please login to continue.", "error")
         return redirect(url_for("login"))
     return None
@@ -133,6 +135,9 @@ def allowed_file(filename):
 
 @app.route("/")
 def landing():
+    # Logged-in users: go straight to dashboard (no need to see landing)
+    if logged_in():
+        return redirect(url_for("dashboard"))
     return render_template("landing.html")
 
 
@@ -258,7 +263,9 @@ def register():
             session["user_email"] = email
             session["user_role"] = user.get("role", "user")
             flash("Account created successfully! Welcome to TenderAI.", "success")
-            return redirect(url_for("dashboard"))
+            # Redirect to the page the user was trying to access, or dashboard
+            next_url = session.pop("next_url", None)
+            return redirect(next_url or url_for("dashboard"))
         else:
             # On failure, do NOT modify session at all
             flash(result["error"], "error")
@@ -284,7 +291,9 @@ def login():
             session["user_email"] = user["email"]
             session["user_role"] = user.get("role", "user")
             flash("Welcome back!", "success")
-            return redirect(url_for("dashboard"))
+            # Redirect to the page the user was trying to access, or dashboard
+            next_url = session.pop("next_url", None)
+            return redirect(next_url or url_for("dashboard"))
         else:
             flash(result["error"], "error")
 
@@ -314,14 +323,11 @@ def forgot_password():
             # Save reset token to database
             save_password_reset(email, token)
 
-            # For MVP: show reset link directly (no email sending)
+            # For MVP: pass reset URL via session so template can render it
             # In production: send email with reset link
             reset_url = url_for("reset_password", token=token, _external=True)
-            flash(
-                f"Password reset link generated. For MVP, click here: "
-                f"<a href='{reset_url}' style='color:var(--blue);font-weight:600;'>Reset Password</a>",
-                "success"
-            )
+            session["reset_url"] = reset_url
+            flash("Password reset link generated. See the link below.", "success")
         else:
             # Don't reveal if email exists
             flash("If an account with that email exists, a reset link has been generated.", "success")
@@ -357,6 +363,7 @@ def reset_password(token):
 
         if result["success"]:
             delete_password_reset(token)
+            session.pop("reset_url", None)
             flash("Password updated successfully! Please login with your new password.", "success")
             return redirect(url_for("login"))
         else:
@@ -799,6 +806,8 @@ def page_not_found(e):
 
 @app.errorhandler(500)
 def internal_error(e):
+    # Log the actual error so we can debug on Render
+    app.logger.error(f"500 Error: {e}", exc_info=True)
     return render_template("500.html"), 500
 
 

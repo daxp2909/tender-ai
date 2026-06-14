@@ -26,8 +26,8 @@
         <li style="font-size:0.88rem;margin-bottom:8px;">✓ Expert review booking</li>
       </ul>
 
-      <a href="/register" style="display:block;text-align:center;padding:12px;border-radius:10px;font-size:0.88rem;font-weight:700;
-         background:var(--blue);color:white;text-decoration:none;">Get Started Free</a>
+      <a href="{% if session.get('user_id') %}/analyze{% else %}/register{% endif %}" style="display:block;text-align:center;padding:12px;border-radius:10px;font-size:0.88rem;font-weight:700;
+         background:var(--blue);color:white;text-decoration:none;">{% if session.get('user_id') %}Analyse a Tender{% else %}Get Started Free{% endif %}</a>
     </div>
 
     <!-- Pro Plan -->
